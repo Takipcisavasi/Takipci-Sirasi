@@ -1,257 +1,269 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>takipcileridovusturuyorum — Sıralamalar</title>
-<meta name="color-scheme" content="dark">
-<style>
-  :root{
-    --bg:#0b0b12;--panel:#12121e;--card:#181828;--muted:#a8a8bb;
-    --line:#24243a;--text:#eaeaf7;--accent:#6b8cff;--chip:#1e1e32;
-    --gold:#f5c451;--silver:#cfd8dc;--bronze:#d7a47b;--green:#5dd39e;
-  }
-  *{box-sizing:border-box} html,body{height:100%}
-  body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial}
-  a{color:inherit;text-decoration:none}
-  .wrap{max-width:1180px;margin:0 auto;padding:22px}
-  header{display:flex;align-items:center;gap:14px;padding:10px 0 18px;border-bottom:1px solid var(--line)}
-  header .logo{display:flex;align-items:center;gap:8px;font-weight:700}
-  header .logo svg{width:20px;height:20px}
-  header .right{margin-left:auto;display:flex;gap:10px}
-  .chip{background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:6px 10px;color:var(--muted);font-size:12px}
-  .btn{background:var(--accent);border:none;border-radius:9px;color:#fff;padding:10px 14px;font-weight:600;cursor:pointer}
-  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
-  .muted{color:var(--muted)}
-  h1{font-size:28px;margin:16px 0 6px}
-  .lead{color:var(--muted);margin:0 0 18px}
-  /* grid */
-  .grid{display:grid;grid-template-columns:1.25fr .9fr;gap:18px}
-  @media(max-width:980px){ .grid{grid-template-columns:1fr}}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
-  .card h3{margin:0 0 12px;font-size:15px;letter-spacing:.2px}
-  /* recent videos */
-  .videos .item{display:flex;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);align-items:center}
-  .videos .item+.item{margin-top:10px}
-  .thumb{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#333,#222)}
-  .videos .title{font-weight:600}
-  .videos .sub{font-size:12px;color:var(--muted)}
-  .pill{font-size:12px;background:var(--chip);border:1px solid var(--line);padding:4px 8px;border-radius:999px}
-  /* top5 */
-  .top5 .row{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:10px 12px}
-  .top5 .row+.row{margin-top:8px}
-  .rank{width:26px;height:26px;border-radius:999px;display:grid;place-items:center;background:#1a1a2b;border:1px solid var(--line);font-weight:700}
-  .name{font-weight:600}
-  .cup{width:18px;height:18px}
-  .gold{color:var(--gold)} .silver{color:var(--silver)} .bronze{color:var(--bronze)}
-  .go-list{margin-top:12px}
-  /* list section */
-  section#list{margin-top:26px}
-  .bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
-  .search{display:flex;gap:8px;align-items:center}
-  input[type=text],select{background:#10101a;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px 12px;outline:none}
-  table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-  th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}
-  th{color:var(--muted);font-weight:600;background:#141422}
-  tr:hover{background:#141426}
-  .tag{font-size:12px;color:var(--green)}
-  .foot{margin-top:8px;color:var(--muted);font-size:12px}
-  .you{background:linear-gradient(90deg,rgba(107,140,255,.12),transparent)}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bugünkü Sıran</title>
+  <style>
+    :root{
+      --bg:#0b0b12; --card:#151525; --line:#282846; --text:#e8e8f1; --mut:#9aa0b4;
+      --chip:#1d1d2d; --chipbd:#32324a; --accent:#7c5cff; --accent2:#8f7cff;
+      --row:#111122; --row2:#0e0e19; --tag:#2a2a4a;
+      --gold:#FFD166; --silver:#C0C0C0; --bronze:#CD7F32;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--text);font:15px system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    a{color:inherit;text-decoration:none}
+    header{position:sticky;top:0;z-index:10;background:rgba(11,11,18,.85);backdrop-filter:saturate(140%) blur(8px);
+      border-bottom:1px solid var(--line)}
+    .wrap{max-width:1100px;margin:0 auto;padding:14px 18px}
+    .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    h1{font-size:20px;margin:0 10px 0 0}
+    .chip{display:inline-flex;align-items:center;gap:8px;background:var(--chip);border:1px solid var(--chipbd);
+      color:#cfd3e6;border-radius:999px;padding:6px 10px;font-size:13px}
+    input,select,button{background:#10101a;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:9px 12px}
+    input:focus,select:focus,button:focus{outline:2px solid #3a3a72;outline-offset:1px}
+    button{cursor:pointer;background:linear-gradient(180deg,var(--accent),var(--accent2));border:none}
+    main{max-width:1100px;margin:14px auto;padding:0 18px;display:grid;grid-template-columns:1.6fr .9fr;gap:16px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:14px}
+    .card .head{padding:14px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+    .card .body{padding:14px}
+    .mut{color:var(--mut)}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px solid var(--line);font-size:14px}
+    th{text-align:left;color:var(--mut);font-weight:600}
+    tr:nth-child(even){background:var(--row)}
+    tr:nth-child(odd){background:var(--row2)}
+    .tag{background:var(--tag);border:1px solid var(--line);border-radius:999px;color:#c7cce6;padding:3px 8px;font-size:12px}
+    .rank{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:#121228;
+          border:1px solid var(--line);font-weight:700}
+    .top5-row{display:flex;align-items:center;gap:10px;background:#101022;border:1px solid var(--line);
+      padding:10px;border-radius:12px}
+    .cup{width:20px;height:20px;opacity:.95}
+    .cup.gold{color:var(--gold)} .cup.silver{color:var(--silver)} .cup.bronze{color:var(--bronze)}
+    .you{background:#101020;border:1px dashed var(--line);}
+    .you strong{font-weight:700}
+    .footer{padding:14px 18px;color:var(--mut);text-align:center}
+    @media (max-width:920px){main{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
-<div class="wrap">
-
   <header>
-    <div class="logo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path d="M5 22h14M12 2l3 7h7l-5.5 4 2 7-6.5-4.5L5 20l2-7L2 9h7l3-7z" stroke-width="1.2"/>
-      </svg>
-      takipcileridovusturuyorum
-    </div>
-    <div class="right">
-      <span class="chip" id="chip-date">—</span>
-      <span class="chip">Toplam <b id="chip-total">0</b> kişi</span>
-      <span class="chip">Öncelik: <b>1000</b></span>
-      <a class="btn ghost" href="https://instagram.com" target="_blank" rel="noreferrer">Instagram</a>
+    <div class="wrap row">
+      <h1>Bugünkü Sıran</h1>
+
+      <span class="chip">Tarih
+        <input id="day" type="date" min="2025-08-22" style="background:#0f0f1c;border:none;color:#fff">
+      </span>
+
+      <span class="chip">Toplam <strong id="total">0</strong> kişi</span>
+      <span class="chip">Öncelik <strong id="activeCount">1000</strong></span>
+
+      <div class="row" style="margin-left:auto">
+        <input id="search" placeholder="@kullanıcı bul" />
+        <button id="btnFind">Sıramı Göster</button>
+      </div>
     </div>
   </header>
 
-  <h1>Videolar ve Sıralamalar</h1>
-  <p class="lead">En güncel videolar ve takipçi sıralamaları burada.</p>
-
-  <div class="grid">
-    <!-- left: recent videos -->
-    <div class="card videos">
-      <h3>Son Videolar</h3>
-
-      <a class="item" href="#list" data-date="today">
-        <div class="thumb"></div>
-        <div style="flex:1">
-          <div class="title" id="v1-title">Bugünkü video</div>
-          <div class="sub">Sıralamaları görmek için tıklayın</div>
+  <main>
+    <!-- LİSTE -->
+    <section class="card">
+      <div class="head row">
+        <strong>Top 100</strong>
+        <span class="mut">İlk 1000 CSV’den; kalanlar seçilen güne göre deterministik karışır.</span>
+        <div class="row" style="margin-left:auto">
+          <label class="mut">Sayfa</label>
+          <select id="page"></select>
+          <button id="btnPage" style="padding:9px 12px;background:#1b1b2e;border:1px solid var(--line)">Görüntüle</button>
         </div>
-        <span class="pill">Son</span>
-      </a>
-
-      <a class="item" href="#list" data-date="yesterday">
-        <div class="thumb"></div>
-        <div style="flex:1">
-          <div class="title" id="v2-title">Dünkü video</div>
-          <div class="sub">Sıralamaları görmek için tıklayın</div>
-        </div>
-      </a>
-    </div>
-
-    <!-- right: top 5 -->
-    <div class="card top5">
-      <h3>Son videodaki ilk 5 Sıralama</h3>
-      <div id="top5"></div>
-      <div class="go-list">
-        <a class="btn" href="#list">Kendi sıralamam ve tüm sıralamayı gör</a>
       </div>
-    </div>
-  </div>
-
-  <!-- full list -->
-  <section id="list">
-    <div class="bar">
-      <div class="search" style="flex:1;min-width:260px">
-        <input id="q" type="text" placeholder="@kullanıcı bul" style="flex:1">
-        <button id="btnFind" class="btn">Sırayı Göster</button>
-        <button id="btnMine" class="btn ghost">Benim Sıram</button>
+      <div class="body">
+        <table id="tbl">
+          <thead>
+            <tr><th>#</th><th>Kullanıcı</th><th class="mut">Not</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
-      <div style="margin-left:auto" class="search">
-        <label class="muted">Sayfa</label>
-        <select id="page">
-          <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
-        </select>
-        <button id="btnPage" class="btn ghost">Görüntüle</button>
+    </section>
+
+    <!-- TOP5 -->
+    <aside class="card">
+      <div class="head"><strong>İlk 5</strong></div>
+      <div class="body" id="top5"></div>
+
+      <div class="body card you" id="youCard" style="display:none;margin: 0 14px 14px;border-radius:12px">
+        <strong id="youTitle"></strong>
+        <div class="mut" id="youNeighbors" style="margin-top:8px"></div>
       </div>
-    </div>
+    </aside>
+  </main>
 
-    <table id="tbl">
-      <thead><tr><th style="width:72px">#</th><th>Kullanıcı</th><th>Not</th></tr></thead>
-      <tbody></tbody>
-    </table>
-    <div class="foot">© 2025 • <a class="muted" href="data/top1000.csv">top1000.csv</a></div>
-  </section>
-
-</div>
+  <div class="footer">© 2025</div>
 
 <script>
-/* ---------- küçük yardımcılar ---------- */
+/*** PRNG (xmur3 + mulberry32) ***/
 function xmur3(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19}return function(){h=Math.imul(h^(h>>>16),2246822507);h=Math.imul(h^(h>>>13),3266489909);return (h^(h>>>16))>>>0}}
 function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296}}
-function shuffleSeed(arr,seedStr){const seed=xmur3(seedStr)();const rand=mulberry32(seed);const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-const today   = new Date();
-const yyyymmdd= d=>d.toISOString().slice(0,10);
-const todayStr= yyyymmdd(today);
-const yestStr = yyyymmdd(new Date(Date.now()-864e5));
-document.getElementById("chip-date").textContent = todayStr;
-document.getElementById("v1-title").textContent = todayStr+" tarihinde paylaşılan video";
-document.getElementById("v2-title").textContent = yestStr+" tarihinde paylaşılan video";
+function shuffleSeed(arr, seedStr){
+  const seed = xmur3(seedStr)();
+  const rand = mulberry32(seed);
+  const a = arr.slice();
+  for (let i=a.length-1;i>0;i--){
+    const j = Math.floor(rand()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+const fmtDate = d => d.toISOString().slice(0,10);
+const today = new Date();
+const todayStr = fmtDate(today);
+document.getElementById("day").value = todayStr;
+document.getElementById("day").setAttribute("max", todayStr);
 
-/* ---------- verileri çek ---------- */
-const cacheBust = todayStr;
+/*** STATE ***/
+const STATE = { base:[], top:[], LB:null, pageSize:100 };
+
+/*** DATA LOAD ***/
 async function loadData(){
+  const v = todayStr; // cache-buster
   const [csvAll, csvTop, bans] = await Promise.all([
-    fetch("data/followers.csv?v="+cacheBust).then(r=>r.text()),
-    fetch("data/top1000.csv?v="+cacheBust).then(r=>r.text()),
-    fetch("data/bans.json?v="+cacheBust).then(r=>r.json()).catch(()=>[])
+    fetch("./data/followers.csv?v="+v).then(r=>r.text()),
+    fetch("./data/top1000.csv?v="+v).then(r=>r.text()),
+    fetch("./data/bans.json?v="+v).then(r=>r.ok?r.json():[])
   ]);
-  const all   = csvAll.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-  const top   = csvTop.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-  const banL  = new Set((bans||[]).map(s=>s.toLowerCase()));
-  const base  = all.filter(u=>u && !banL.has(u.toLowerCase())); // ban hariç
-  document.getElementById("chip-total").textContent = base.length;
-  return { base, top };
+  const followers = csvAll.split(/\r?\n/).map(s=>s.trim().replace(/^@/,"")).filter(Boolean);
+  const banset = new Set((bans||[]).map(s=>s.toLowerCase()));
+  const base = followers.filter(u=>u && !banset.has(u.toLowerCase()));
+
+  const topRaw = csvTop.split(/\r?\n/).map(s=>s.trim().replace(/^@/,"")).filter(Boolean);
+
+  document.getElementById("total").textContent = base.length;
+  document.getElementById("activeCount").textContent = topRaw.length;
+
+  STATE.base = base;
+  STATE.top = topRaw;
 }
 
-/* ---------- günlük sıralama üret ---------- */
+/*** BUILD: first 1000 fixed, rest shuffled by date ***/
 function buildDaily(base, topRaw, dateStr){
   const baseL = new Set(base.map(u=>u.toLowerCase()));
-  const top   = topRaw.filter(u=>baseL.has(u.toLowerCase())); // CSV’de olup listede olanlar
+  const top   = topRaw.filter(u=>baseL.has(u.toLowerCase()));      // CSV’deki sırayla korunur
   const topL  = new Set(top.map(u=>u.toLowerCase()));
-  const tail  = base.filter(u=>!topL.has(u.toLowerCase()));
-  const mixed = top.concat( shuffleSeed(tail,"DAY-"+dateStr) );
+  const tail  = base.filter(u=>!topL.has(u.toLowerCase()));        // diğerleri
+  const mixed = top.concat(shuffleSeed(tail,"DAY-"+dateStr));      // günlük deterministik
   const idx   = new Map(); mixed.forEach((u,i)=>idx.set(u.toLowerCase(),i));
   return { list:mixed, idx, topLen:top.length };
 }
 
-/* ---------- arayüz ---------- */
+/*** RENDER TOP5 ***/
+function cupSVG(cls){ return `
+<svg class="cup ${cls}" viewBox="0 0 24 24" fill="currentColor">
+<path d="M8 3h8v3h4v3c0 2.8-2 5-6 5H10c-4 0-6-2.2-6-5V6h4V3zm8 10v2H8v-2c1.3.7 2.6 1 4 1s2.7-.3 4-1zm-8 4h8v2c0 1.7-1.3 3-3 3H9c-1.7 0-3-1.3-3-3v-2z"/>
+</svg>`; }
 function renderTop5(list){
-  const el = document.getElementById("top5");
-  el.innerHTML = "";
-  const cup = (cls)=>`<svg class="cup ${cls}" viewBox="0 0 24 24" fill="currentColor"><path d="M8 3h8v3h4v3c0 2.8-2 5-6 5H10c-4 0-6-2.2-6-5V6h4V3zm8 10v2H8v-2c1.3.7 2.6 1 4 1s2.7-.3 4-1zm-8 4h8v2c0 1.7-1.3 3-3 3H9c-1.7 0-3-1.3-3-3v-2z"/></svg>`;
+  const box = document.getElementById("top5");
+  box.innerHTML="";
   for(let i=0;i<5 && i<list.length;i++){
-    const u = list[i];
-    const icon = i===0?cup("gold"): i===1?cup("silver"): i===2?cup("bronze"):"";
-    el.insertAdjacentHTML("beforeend",
-      `<div class="row">
-        <div class="rank">${i+1}</div>
-        <div class="name">@${u}</div>
-        <div style="margin-left:auto">${icon}</div>
-      </div>`);
+    const u=list[i];
+    const icon = i===0?cupSVG("gold") : i===1?cupSVG("silver") : i===2?cupSVG("bronze") : "";
+    box.insertAdjacentHTML("beforeend",
+      `<div class="top5-row" style="margin-bottom:10px">
+         <div class="rank">${i+1}</div>
+         <div style="flex:1 1 auto">
+           <a href="https://instagram.com/${u}" target="_blank" rel="noreferrer">@${u}</a>
+         </div>
+         ${icon}
+       </div>`);
   }
 }
 
+/*** RENDER TABLE (paged) ***/
 function renderTable(list, page=1, size=100, topLen=1000){
-  const start=(page-1)*size, end=Math.min(list.length,start+size);
   const tb = document.querySelector("#tbl tbody");
   tb.innerHTML="";
-  for(let i=start; i<end; i++){
-    const u=list[i], rank=i+1, tag = rank<=topLen?`<span class="tag">Öncelik</span>`:"";
+  const start=(page-1)*size, end=Math.min(list.length,start+size);
+  for(let i=start;i<end;i++){
+    const u=list[i];
+    const rank=i+1;
+    const tag = rank<=topLen ? `<span class="tag">Öncelik</span>` : "";
     tb.insertAdjacentHTML("beforeend",
-      `<tr><td>${rank}</td><td>@${u}</td><td>${tag}</td></tr>`);
+      `<tr>
+        <td>${rank}</td>
+        <td><a href="https://instagram.com/${u}" target="_blank" rel="noreferrer">@${u}</a></td>
+        <td>${tag}</td>
+      </tr>`);
   }
 }
 
-function showMe(user, LB){
-  const q = (user||"").trim().replace(/^@/,"");
-  if(!q){return}
-  const i = LB.idx.get(q.toLowerCase());
-  const tb = document.querySelector("#tbl tbody");
+/*** PAGE OPTIONS ***/
+function fillPages(total,size){
+  const sel = document.getElementById("page");
+  sel.innerHTML="";
+  const pages = Math.max(1, Math.ceil(total/size));
+  for(let p=1;p<=pages;p++){
+    const opt=document.createElement("option");
+    opt.value=p; opt.textContent=p;
+    sel.appendChild(opt);
+  }
+}
+
+/*** YOU (search result) ***/
+function showYou(username, LB){
+  const youCard = document.getElementById("youCard");
+  const title   = document.getElementById("youTitle");
+  const neigh   = document.getElementById("youNeighbors");
+  const u = (username||"").trim().replace(/^@/,"");
+  if(!u){ youCard.style.display="none"; return; }
+  const i = LB.idx.get(u.toLowerCase());
   if(i==null){
-    alert("@"+q+" bugün listede bulunamadı.");
+    youCard.style.display="block";
+    title.textContent = `@${u} bugün listede bulunamadı.`;
+    neigh.textContent = ``;
     return;
   }
-  const page = Math.floor(i/100)+1;
-  document.getElementById("page").value = String(page);
-  renderTable(LB.list, page, 100, LB.topLen);
-  // highlight + komşular
-  const start=(page-1)*100, row = i-start;
-  const trs = tb.querySelectorAll("tr");
-  if(trs[row]) trs[row].classList.add("you");
-  // alt bilgi
-  const from=Math.max(0,i-3), to=Math.min(LB.list.length,i+4);
-  const neigh = LB.list.slice(from,to).map((x,j)=>`${from+j+1}. @${x}`).join(" • ");
-  console.info(`@${q} → #${i+1}`, neigh);
+  const rank=i+1, total=LB.list.length, pct=((rank/total)*100).toFixed(2);
+  const from=Math.max(0,i-3), to=Math.min(total,i+4);
+  const neighbors=LB.list.slice(from,to).map((x,j)=> `${from+j+1}. @${x}`).join(" • ");
+  youCard.style.display="block";
+  title.innerHTML = `<strong>@${u}</strong> → #${rank} (ilk %${pct})`;
+  neigh.textContent = neighbors;
 }
 
-/* ---------- başlat ---------- */
-let STATE=null;
+/*** INIT ***/
 (async function(){
-  const {base, top} = await loadData();
-  const LB = buildDaily(base, top, todayStr);
-  STATE = {base,top,LB};
-  renderTop5(LB.list);
-  renderTable(LB.list,1,100,LB.topLen);
+  try{
+    await loadData();
+    STATE.LB = buildDaily(STATE.base, STATE.top, todayStr);
+    renderTop5(STATE.LB.list);
+    fillPages(STATE.LB.list.length, STATE.pageSize);
+    renderTable(STATE.LB.list, 1, STATE.pageSize, STATE.LB.topLen);
+  }catch(e){
+    alert("Veri yüklenemedi."); console.error(e);
+  }
 })();
 
-/* ---------- etkileşimler ---------- */
-document.getElementById("btnPage").onclick = () => {
+/*** EVENTS ***/
+document.getElementById("btnPage").onclick = ()=>{
   const p = parseInt(document.getElementById("page").value,10)||1;
-  renderTable(STATE.LB.list, p, 100, STATE.LB.topLen);
+  renderTable(STATE.LB.list, p, STATE.pageSize, STATE.LB.topLen);
 };
-document.getElementById("btnFind").onclick = () => {
-  const v = document.getElementById("q").value;
-  showMe(v, STATE.LB);
+document.getElementById("btnFind").onclick = ()=>{
+  const v = document.getElementById("search").value;
+  showYou(v, STATE.LB);
 };
-document.getElementById("btnMine").onclick = () => {
-  const v = document.getElementById("q").value || prompt("Kullanıcı adın? (@ hariç)");
-  if(v) { document.getElementById("q").value = v; showMe(v, STATE.LB); }
-};
+document.getElementById("day").addEventListener("change",(e)=>{
+  const d = e.target.value || todayStr;
+  STATE.LB = buildDaily(STATE.base, STATE.top, d);
+  renderTop5(STATE.LB.list);
+  fillPages(STATE.LB.list.length, STATE.pageSize);
+  document.getElementById("page").value = "1";
+  renderTable(STATE.LB.list, 1, STATE.pageSize, STATE.LB.topLen);
+  const v = document.getElementById("search").value;
+  if(v) showYou(v, STATE.LB);
+});
 </script>
 </body>
 </html>
