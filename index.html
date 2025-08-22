@@ -8,43 +8,36 @@
     :root{
       --bg:#0b0b12; --card:#141422; --card2:#10101a;
       --border:#26263a; --muted:#a9a9b5; --text:#eaeaf2;
-      --accent:#7c83ff; --accent-2:#5b61e8; --good:#39d98a; --chip:#1f2030;
+      --accent:#7c83ff; --chip:#1f2030; --ok:#39d98a;
     }
     *{box-sizing:border-box}
     html,body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Arial}
-    a{color:inherit;text-decoration:none}
-    .wrap{max-width:1200px;margin:0 auto;padding:18px}
+    .wrap{max-width:1200px;margin:0 auto;padding:16px}
     header{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    h1{font-size:20px;margin:0}
+    h1{margin:0;font-size:20px}
     .tag{background:var(--chip);border:1px solid var(--border);color:var(--muted);padding:6px 10px;border-radius:999px;font-size:12px}
     .grow{flex:1}
-    .btn{background:var(--accent);border:none;color:#fff;padding:10px 12px;border-radius:10px;cursor:pointer}
-    .btn:active{transform:translateY(1px)}
-    .btn-ghost{background:var(--chip);color:var(--text);border:1px solid var(--border)}
-    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
     input,select{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:10px;border-radius:10px}
-    main{margin-top:14px;display:grid;grid-template-columns: 1fr 320px;gap:14px}
+    .btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:10px 12px;cursor:pointer}
+    .btn-ghost{background:var(--chip);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:9px 12px;cursor:pointer}
+    main{margin-top:12px;display:grid;grid-template-columns:1fr 320px;gap:12px}
     @media(max-width:980px){main{grid-template-columns:1fr}}
     .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px}
-    .card h3{margin:0 0 10px 0;font-size:14px;color:var(--muted)}
+    .card h3{margin:0 0 8px 0;font-size:14px;color:var(--muted)}
     table{width:100%;border-collapse:collapse}
-    th,td{padding:9px 8px;border-bottom:1px solid var(--border)}
-    th{font-weight:600;color:var(--muted);text-align:left}
+    th,td{padding:9px 8px;border-bottom:1px solid var(--border);text-align:left}
+    th{color:var(--muted)}
     tbody tr:hover{background:#0f0f18}
     .muted{color:var(--muted)}
-    .chip{background:var(--chip);border:1px solid var(--border);border-radius:999px;padding:2px 8px;font-size:12px}
     .me{background:#0d1b12 !important}
     .me td{color:#a3ffca}
-    .right{margin-left:auto}
-    .top5 li{display:flex;align-items:center;gap:10px;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:8px}
-    .idx{width:28px;height:28px;border-radius:8px;background:var(--chip);display:grid;place-items:center;color:var(--muted);font-weight:600}
-    .trophy{font-size:16px}
-    .top1 .idx{background:linear-gradient(90deg,#ffd54f,#ffea00);color:#4a3f00}
-    .top2 .idx{background:linear-gradient(90deg,#d7d7d7,#f3f3f3);color:#2f2f2f}
-    .top3 .idx{background:linear-gradient(90deg,#f4a261,#ffcc80);color:#4a2500}
-    .you{background:#0d1b12;border:1px dashed #295c44}
-    .you strong{color:#71ffb2}
+    .top5{list-style:none;margin:0;padding:0}
+    .top5 li{display:flex;gap:10px;align-items:center;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:8px}
+    .idx{width:28px;height:28px;border-radius:8px;background:var(--chip);display:grid;place-items:center;color:var(--muted);font-weight:700}
     .hidden{display:none}
+    .err{background:#301e28;border:1px solid #593043;color:#ffb2c1;padding:10px;border-radius:10px;margin-top:10px}
+    .ok{color:var(--ok)}
   </style>
 </head>
 <body>
@@ -52,19 +45,188 @@
     <header>
       <h1>Takipçi Savaşı</h1>
       <span class="tag" id="metaTotal">Toplam 0 kişi</span>
-      <span class="tag" id="metaTop">Öncelik: 1000</span>
+      <span class="tag">Öncelik: 1000</span>
       <div class="grow"></div>
       <a class="tag" href="https://www.instagram.com/takipcisavasi" target="_blank" rel="noopener">instagram.com/takipcisavasi</a>
     </header>
 
-    <div class="row" style="margin-top:10px">
+    <div class="row">
       <input id="q" placeholder="@kullanıcı bul" class="grow">
       <button class="btn" id="btnFind">Sırayı Göster</button>
       <label class="muted">Sayfa</label>
       <select id="pageSel"></select>
       <button class="btn-ghost" id="btnPage">Görüntüle</button>
+      <span class="muted" id="today" style="margin-left:auto"></span>
     </div>
 
+    <div id="status" class="muted" style="margin-top:8px"></div>
+
+    <main>
+      <section class="card">
+        <h3>Top 100</h3>
+        <table>
+          <thead>
+            <tr><th>#</th><th>Kullanıcı</th><th class="muted">Not</th></tr>
+          </thead>
+          <tbody id="tbody"><tr><td colspan="3" class="muted">Yükleniyor…</td></tr></tbody>
+        </table>
+      </section>
+
+      <aside class="card">
+        <h3>İlk 5</h3>
+        <ol id="top5" class="top5"></ol>
+
+        <div id="youCard" class="card hidden" style="margin-top:10px;background:#0d1b12;border:1px dashed #295c44">
+          <strong id="youTitle">@kullanıcı</strong>
+          <div id="youInfo" class="muted" style="margin-top:6px"></div>
+        </div>
+      </aside>
+    </main>
+
+    <div id="errorBox" class="err hidden"></div>
+  </div>
+
+<script>
+/* ----------------------- deterministic RNG ----------------------- */
+function xmur3(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19}return function(){h=Math.imul(h^(h>>>16),2246822507);h=Math.imul(h^(h>>>13),3266489909);return (h^(h>>>16))>>>0}}
+function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296}}
+function shuffle(arr,seed){const r=mulberry32(seed);const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=(r()*(i+1))|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+const GLOBAL_SEED = xmur3('takipcisavasi-v1')();
+
+/* ----------------------- small helpers ----------------------- */
+const $ = sel => document.querySelector(sel);
+const fmtDate = d => d.toISOString().slice(0,10);
+$('#today').textContent = fmtDate(new Date());
+
+function showError(msg){
+  const box = $('#errorBox'); box.textContent = msg; box.classList.remove('hidden');
+}
+function setStatus(msg){ $('#status').textContent = msg || ''; }
+
+/* ----------------------- load data ----------------------- */
+async function fetchText(path){
+  const r = await fetch(path, {cache:'no-store'}); // no-store => en sağlıklısı
+  if(!r.ok) throw new Error(path+' → '+r.status+' '+r.statusText);
+  return await r.text();
+}
+async function fetchJSON(path){
+  const r = await fetch(path, {cache:'no-store'});
+  if(!r.ok) throw new Error(path+' → '+r.status+' '+r.statusText);
+  return await r.json();
+}
+
+async function loadData(){
+  // mutlak yollar: /data/…  (Vercel’de kökten sunulur)
+  const [csvAll, csvTop, bans] = await Promise.all([
+    fetchText('/data/followers.csv'),
+    fetchText('/data/top1000.csv'),
+    fetchJSON('/data/bans.json').catch(()=>[])
+  ]);
+  const base = csvAll.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  const top  = csvTop.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  const banSet = new Set((bans||[]).map(s=>s.toLowerCase()));
+  const cleaned = base.filter(u=>!banSet.has(u.toLowerCase()));
+  $('#metaTotal').textContent = 'Toplam '+cleaned.length+' kişi';
+  return {base: cleaned, top};
+}
+
+/* ----------------------- build list ----------------------- */
+function buildLB(base, top){
+  const baseLower = new Set(base.map(u=>u.toLowerCase()));
+  const fixedTop = top.filter(u=>baseLower.has(u.toLowerCase())); // top1000 sırayı KORU
+  const topSet = new Set(fixedTop.map(u=>u.toLowerCase()));
+  const others = base.filter(u=>!topSet.has(u.toLowerCase()));
+  const randomRest = shuffle(others, GLOBAL_SEED);
+  const list = fixedTop.concat(randomRest);
+  const idx  = new Map(); list.forEach((u,i)=>idx.set(u.toLowerCase(),i));
+  return {list, idx, fixedTop};
+}
+
+/* ----------------------- render ----------------------- */
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]))}
+
+function renderTop5(list){
+  const ul = $('#top5'); ul.innerHTML='';
+  for(let i=0;i<5 && i<list.length;i++){
+    const li=document.createElement('li');
+    li.innerHTML = <div class="idx">${i+1}</div><div>@${escapeHtml(list[i])}</div>;
+    ul.appendChild(li);
+  }
+}
+function renderTable(list, page=1, size=100, highlight=''){
+  const tb = $('#tbody'); tb.innerHTML='';
+  const start=(page-1)*size, end=Math.min(start+size,list.length);
+  for(let i=start;i<end;i++){
+    const u=list[i]; const tr=document.createElement('tr');
+    tr.innerHTML = <td>${i+1}</td><td>@${escapeHtml(u)}</td><td class="muted">${i<1000?'Öncelik':''}</td>;
+    if(highlight && u.toLowerCase()===highlight.toLowerCase()) tr.classList.add('me');
+    tb.appendChild(tr);
+  }
+}
+function fillPages(total, size=100){
+  const sel=$('#pageSel'); sel.innerHTML='';
+  const pages=Math.max(1,Math.ceil(total/size));
+  for(let i=1;i<=pages;i++){ const o=document.createElement('option'); o.value=o.textContent=i; sel.appendChild(o); }
+}
+
+function showYouCard(user, LB){
+  const card=$('#youCard');
+  if(!user){ card.classList.add('hidden'); return; }
+  const i = LB.idx.get(user.toLowerCase());
+  card.classList.remove('hidden');
+  if(i==null){
+    $('#youTitle').textContent='@'+user;
+    $('#youInfo').textContent='Bugün listede bulunamadı.';
+  }else{
+    const rank=i+1,total=LB.list.length; 
+    const from=Math.max(0,i-3), to=Math.min(total,i+4);
+    const neigh=LB.list.slice(from,to).map((x,j)=>${from+j+1}. @${x}).join('  •  ');
+    $('#youTitle').textContent=@${LB.list[i]} → #${rank};
+    $('#youInfo').textContent=neigh;
+  }
+}
+
+/* ----------------------- app ----------------------- */
+let LB=null, CURRENT_PAGE=1;
+(async function init(){
+  try{
+    setStatus('Veriler yükleniyor…');
+    const data = await loadData();
+    LB = buildLB(data.base, data.top);
+    renderTop5(LB.list);
+    fillPages(LB.list.length,100);
+    renderTable(LB.list,1);
+    setStatus('Hazır ✓');
+
+    $('#btnFind').onclick=()=>{
+      const q=$('#q').value.trim().replace(/^@/,'');
+      if(!q){ showYouCard('',LB); renderTable(LB.list,CURRENT_PAGE,100); return; }
+      const i=LB.idx.get(q.toLowerCase());
+      if(i!=null){
+        CURRENT_PAGE=Math.floor(i/100)+1;
+        $('#pageSel').value=CURRENT_PAGE;
+        renderTable(LB.list,CURRENT_PAGE,100,q);
+      }else{
+        renderTable(LB.list,CURRENT_PAGE,100);
+      }
+      showYouCard(q,LB);
+    };
+    $('#btnPage').onclick=()=>{
+      CURRENT_PAGE=parseInt($('#pageSel').value,10)||1;
+      renderTable(LB.list,CURRENT_PAGE,100);
+      showYouCard('',LB);
+    };
+  }catch(err){
+    console.error(err);
+    showError('Veri yüklenemedi: '+err.message+
+      ' — Lütfen "/data/followers.csv", "/data/top1000.csv" ve "/data/bans.json" dosyalarının mevcut olduğundan ve Vercel’de statik servis edildiğinden emin olun.');
+    $('#tbody').innerHTML='<tr><td colspan="3" class="muted">Veri yüklenemedi.</td></tr>';
+    setStatus('');
+  }
+})();
+</script>
+</body>
+</html>
     <main>
       <section class="card">
         <div class="row">
