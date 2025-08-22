@@ -4,333 +4,331 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Takipçi Savaşı</title>
-  <meta name="color-scheme" content="dark" />
-  <meta name="theme-color" content="#11121a" />
+  <meta name="color-scheme" content="dark light" />
+  <link rel="preconnect" href="https://unavatar.io" crossorigin>
   <style>
     :root{
-      --bg:#0b0b12;--panel:#141422;--panel2:#10101a;--line:#26263a;--muted:#a8a8b7;
-      --text:#eaeaf5;--brand:#7c4dff;--chip:#1e1e2e;--chipline:#2f2f42;--accent:#6d57ff;
-      --ok:#3ecf8e;
+      --bg:#0b0b12;
+      --card:#141422;
+      --muted:#a9adc1;
+      --border:#25263a;
+      --accent:#7c6cff;
+      --accent-2:#9f97ff;
+      --text:#e8eaf6;
+      --ok:#23d18b;
+      --warning:#f5a524;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0;background:var(--bg);color:var(--text);
-      font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      margin:0;
+      font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
     }
-    a{color:inherit;text-decoration:none}
-    .wrap{max-width:1200px;margin:0 auto;padding:18px}
-    header{
-      display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px
-    }
-    h1{font-size:20px;margin:0}
-    .badge{
-      background:var(--chip);border:1px solid var(--chipline);
-      border-radius:999px;padding:6px 10px;font-size:12px;color:#cfd0e6
-    }
-    .spacer{flex:1}
-    .igbtn{
-      background:#1a1b2b;border:1px solid #2a2b40;color:#cfd0ff;
-      padding:8px 12px;border-radius:999px;font-weight:600
-    }
-    .row{display:grid;grid-template-columns:2fr 1fr;gap:16px}
-    @media (max-width:980px){.row{grid-template-columns:1fr}}
-    .card{
-      background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px
-    }
-    .rowtop{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-    .muted{color:var(--muted)}
-    input,select,button{
-      background:var(--panel2);border:1px solid #2b2b3e;color:var(--text);
-      border-radius:8px;padding:10px
-    }
-    button{cursor:pointer}
-    .search{display:flex;gap:8px;align-items:center}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:8px 10px;border-bottom:1px solid #1f1f2f}
-    th{color:#bdbddd;text-align:left;font-weight:600}
-    .userCell{display:flex;align-items:center;gap:8px}
-    .ava{
-      width:26px;height:26px;border-radius:50%;flex:0 0 26px;object-fit:cover;
-      background:#1a1a2a;border:1px solid #2a2a3c
-    }
-    .chip{
-      background:#19192a;border:1px solid #2f2f42; color:#c9c9e6;
-      font-size:12px;border-radius:999px;padding:3px 8px
-    }
-    .top5-row{
-      display:flex;align-items:center;gap:10px;background:#151527;
-      border:1px solid #25253a;border-radius:10px;padding:8px 10px
-    }
-    .rank{
-      width:28px;height:28px;border-radius:8px;background:#26264a;color:#cbd;
-      display:grid;place-items:center;font-weight:700
-    }
-    .cup{filter:drop-shadow(0 0 2px #0005)}
-    .gold{color:#ffd54a}.silver{color:#cfd8dc}.bronze{color:#ffab7a}
-    .footer{margin-top:8px;font-size:12px;color:#9aa}
 
-    /* --- Sorgu sonucu barı ve vurgu --- */
-    .youbar{
-      display:none;align-items:center;gap:10px;background:#10142a;
-      border:1px solid #2a2f47;border-radius:10px;padding:8px 10px;margin-bottom:10px
+    /* Header */
+    .container{max-width:1100px;margin:0 auto;padding:18px 16px 32px}
+    header{
+      display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+      padding:8px 0 18px;border-bottom:1px solid var(--border);
+      position:sticky;top:0;background:linear-gradient(180deg,var(--bg) 80%,rgba(11,11,18,0));
+      z-index:5;
     }
-    .youbar .pill{
-      background:#0f2b1e;border:1px solid #2a7a56;color:#baf8d2;
-      border-radius:999px;padding:4px 8px;font-weight:700
+    .brand{font-weight:800;letter-spacing:.2px;font-size:20px;margin-right:8px}
+    .pill{background:#101020;border:1px solid var(--border);padding:6px 10px;border-radius:999px;color:var(--muted)}
+    .spacer{flex:1}
+    a.btn,a.btn:visited,button.btn{
+      display:inline-flex;align-items:center;gap:8px;
+      background:var(--accent);color:#fff;text-decoration:none;
+      border:1px solid #6b5fff;padding:9px 14px;border-radius:10px;cursor:pointer;
+      transition:.2s;
     }
-    .tr-hi{background:#0f2b1e !important}
-    .tr-hi td{border-bottom-color:#1c4b3a}
+    a.btn:hover,button.btn:hover{filter:brightness(1.05)}
+    .link-ig{background:#101020;border-color:var(--border);color:#c7cbdf}
+    .link-ig:hover{background:#17172a}
+    #search{min-width:240px;background:#10101a;border:1px solid var(--border);color:var(--text);padding:10px;border-radius:10px;outline:none}
+    #btnFind{background:var(--accent-2);border:1px solid #8c84ff}
+
+    /* Layout */
+    .grid{
+      display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-top:16px;
+    }
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px}
+    .card h3{margin:0 0 10px 0;font-size:15px;font-weight:700}
+    .muted{color:var(--muted)}
+    .badge{border:1px solid var(--border);background:#101020;padding:4px 8px;border-radius:999px;font-size:12px;color:#c7cbdf}
+
+    /* Table */
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left}
+    th{color:#b7b9c9;font-weight:600}
+    .rank{width:46px;opacity:.9}
+    .avatar{width:28px;height:28px;border-radius:999px;display:inline-block;object-fit:cover;vertical-align:middle;border:1px solid var(--border);background:#0d0d17}
+    .handle{
+      color:#dfe1f3;text-decoration:none;vertical-align:middle;margin-left:8px;
+    }
+    .handle:hover{text-decoration:underline}
+    .tag-ok{border:1px solid #286a50;background:#122a22;color:#96f0c8;padding:3px 8px;border-radius:999px;font-size:12px}
+
+    /* Top 5 list */
+    .top5 li{list-style:none;margin:0;padding:0}
+    .top5 .item{
+      display:flex;align-items:center;gap:10px;
+      background:#111125;border:1px solid var(--border);border-radius:12px;
+      padding:10px 12px;margin-bottom:10px;
+    }
+    .top5 .n{width:26px;height:26px;border:1px solid var(--border);border-radius:999px;display:grid;place-items:center;color:#cdd0e8;font-weight:700}
+    .trophy{font-size:16px;margin-left:auto}
+
+    /* You (search) card */
+    .you{display:none;margin-top:16px}
+    .you.show{display:block}
+    .you .title{font-weight:700}
+    .you .line{margin-top:6px;color:var(--muted)}
+    .you .pill-green{background:#0e3729;border:1px solid #175c46;color:#a6f3d2}
+
+    /* Controls row */
+    .controls{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+    select{background:#10101a;border:1px solid var(--border);color:#cdd0e8;padding:8px;border-radius:10px}
+    .btn-ghost{background:#101020;border:1px solid var(--border);color:#cdd0e8}
+
+    /* Responsive */
+    @media (max-width:980px){
+      .grid{grid-template-columns:1fr}
+      header{gap:8px}
+      #search{min-width:160px;flex:1}
+      .spacer{display:none}
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <div class="container">
     <header>
-      <h1>Takipçi Savaşı</h1>
-      <span class="badge" id="dateBadge"></span>
-      <span class="badge">Toplam <b id="total">0</b> kişi</span>
-      <span class="badge">Öncelik: <b id="prioCount">0</b></span>
+      <div class="brand">Takipçi Savaşı</div>
+      <span class="pill" id="today"></span>
+      <span class="pill">Toplam <b id="total">0</b> kişi</span>
+      <span class="pill">Öncelik: <b>1000</b></span>
       <div class="spacer"></div>
-      <a class="igbtn" href="https://www.instagram.com/takipcisavasi" target="_blank" rel="noreferrer">
-        instagram.com/takipcisavasi
-      </a>
+      <a class="btn link-ig" href="https://instagram.com/takipcisavasi" target="_blank" rel="noopener">instagram.com/takipcisavasi</a>
+      <input id="search" placeholder="@kullanıcı bul" />
+      <button id="btnFind" class="btn">Sırayı Göster</button>
     </header>
 
-    <div class="row">
-      <!-- SOL: LİSTE -->
+    <!-- You card -->
+    <div id="youCard" class="card you">
+      <div class="title" id="youTitle"></div>
+      <div class="line" id="youNeighbors"></div>
+    </div>
+
+    <div class="grid">
+      <!-- Left -->
       <section class="card">
-        <div class="rowtop">
-          <strong style="font-size:16px">Top 100</strong>
-          <div class="spacer"></div>
-          <div class="search">
-            <input id="q" placeholder="@kullanıcı bul" />
-            <button id="btnShow">Sırayı Göster</button>
-            <label class="muted" style="margin-left:8px">Sayfa</label>
-            <select id="page">
-              <option>1</option><option>2</option><option>3</option><option>4</option>
-              <option>5</option><option>6</option><option>7</option><option>8</option>
-              <option>9</option><option>10</option>
-            </select>
-            <button id="btnPage">Görüntüle</button>
-          </div>
+        <div class="controls">
+          <h3 style="margin-right:auto">Top 100</h3>
+          <span class="muted">Sayfa:</span>
+          <select id="page"></select>
+          <button id="btnPage" class="btn btn-ghost">Görüntüle</button>
         </div>
-
-        <!-- Sorgu sonucu barı -->
-        <div id="youBar" class="youbar"></div>
-
         <table id="tbl">
           <thead>
-            <tr><th>#</th><th>Kullanıcı</th><th class="muted">Not</th></tr>
+            <tr><th class="rank">#</th><th>Kullanıcı</th><th>Not</th></tr>
           </thead>
           <tbody></tbody>
         </table>
-        <div class="footer">© 2025 • <a class="muted" href="./data/top1000.csv" target="_blank">top1000.csv</a></div>
       </section>
 
-      <!-- SAĞ: TOP 5 -->
+      <!-- Right -->
       <aside class="card">
-        <div class="rowtop"><strong style="font-size:16px">İlk 5</strong></div>
-        <div id="top5"></div>
+        <h3>İlk 5</h3>
+        <ul class="top5" id="top5"></ul>
       </aside>
     </div>
+
+    <p class="muted" style="margin-top:22px">© <span id="year"></span> • <a class="handle" href="./data/top1000.csv" target="_blank">top1000.csv</a></p>
   </div>
 
-  <script>
-    /* ---------- yardımcılar ---------- */
-    const $ = (s, d=document)=> d.querySelector(s);
-    const fmtDate = (d)=> d.toISOString().slice(0,10);
+<script>
+/*** Deterministik PRNG (xmur3 + mulberry32) ***/
+function xmur3(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19}return function(){h=Math.imul(h^(h>>>16),2246822507);h=Math.imul(h^(h>>>13),3266489909);return (h^(h>>>16))>>>0}}
+function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296}}
+function shuffleSeed(arr, seedStr){
+  const seed = xmur3(seedStr)();
+  const rand = mulberry32(seed);
+  const a = arr.slice();
+  for (let i=a.length-1;i>0;i--){
+    const j = Math.floor(rand()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
 
-    // PRNG (deterministik karıştırma)
-    function xmur3(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19}return function(){h=Math.imul(h^(h>>>16),2246822507);h=Math.imul(h^(h>>>13),3266489909);return (h^(h>>>16))>>>0}}
-    function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296}}
-    function shuffleSeed(arr, seedStr){
-      const seed = xmur3(seedStr)();
-      const rand = mulberry32(seed);
-      const a = arr.slice();
-      for (let i=a.length-1;i>0;i--){
-        const j = Math.floor(rand()*(i+1));
-        [a[i],a[j]]=[a[j],a[i]];
-      }
-      return a;
-    }
+/*** Yardımcılar ***/
+const today = new Date();
+const todayStr = today.toISOString().slice(0,10);
+document.getElementById("today").textContent = todayStr;
+document.getElementById("year").textContent = today.getFullYear();
 
-    const today = new Date();
-    const todayStr = fmtDate(today);
-    $("#dateBadge").textContent = todayStr;
+function cleanHandle(line){
+  if(!line) return "";
+  let s = String(line).trim();
+  // "1. username", "1) username", "1 - username" vb. kırp
+  s = s.replace(/^\s*\d+\s*[\.\)\-:–—]\s*/,"");
+  // baştaki @
+  s = s.replace(/^@/,"");
+  // ilk geçerli kullanıcı adı (harf, rakam, "_" veya ".")
+  const m = s.match(/[A-Za-z0-9._]+/);
+  return m ? m[0] : "";
+}
+const igUrl = (u)=> `https://www.instagram.com/${u}/`;
+const avatar = (u)=> `https://unavatar.io/instagram/${u}`;
 
-    /* ---------- avatar kaynakları + fallback ---------- */
-    const avatarURL = (u) =>
-      `https://unavatar.io/instagram/${encodeURIComponent(u)}`;
-    const avatarFallback = (u) =>
-      `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(u)}&backgroundType=gradientLinear`;
+/*** Veri yükleme ***/
+async function loadData(){
+  const [csvAll, csvTop, bans] = await Promise.all([
+    fetch("./data/followers.csv").then(r=>r.text()),
+    fetch("./data/top1000.csv").then(r=>r.text()),
+    fetch("./data/bans.json").then(r=>r.json()).catch(()=>[])
+  ]);
 
-    /* ---------- veri yükleme ---------- */
-    async function loadData(){
-      const v = todayStr; // cache-buster
-      const [csvFollowers, csvTop, bansJson] = await Promise.all([
-        fetch("./data/followers.csv?v="+v).then(r=>r.text()),
-        fetch("./data/top1000.csv?v="+v).then(r=>r.text()),
-        fetch("./data/bans.json?v="+v).then(r=>r.json()).catch(()=>[])
-      ]);
+  // followers
+  const followersRaw = csvAll.split(/\r?\n/).map(s=>cleanHandle(s)).filter(Boolean);
+  const followers = Array.from(new Set(followersRaw.map(x=>x.toLowerCase())))
+                    .map(lc => followersRaw.find(h=>h.toLowerCase()===lc)); // orijinal kasayı koru
 
-      const all = csvFollowers.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-      const top1000Raw = csvTop.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-      const bans = new Set((bansJson||[]).map(x=>x.toLowerCase()));
+  // ban
+  const banSet = new Set((bans||[]).map(s=>cleanHandle(s).toLowerCase()));
+  const base = followers.filter(u=>!banSet.has(u.toLowerCase()));
 
-      const base = all.filter(u => u && !bans.has(u.toLowerCase()));
-      const baseLower = new Set(base.map(u=>u.toLowerCase()));
+  // top1000 sıra birebir
+  const tRaw = csvTop.split(/\r?\n/).map(s=>cleanHandle(s)).filter(Boolean);
+  const topOrdered = [];
+  const seen = new Set();
+  for(const h of tRaw){
+    const l = h.toLowerCase();
+    if(!seen.has(l)){seen.add(l);topOrdered.push(h)}
+  }
+  const topSetLower = new Set(topOrdered.map(x=>x.toLowerCase()));
 
-      // top1000 -> sadece base'de olanlar sabit sırada
-      const topFixed = top1000Raw.filter(u => baseLower.has(u.toLowerCase()));
+  // Diğerleri
+  const others = base.filter(u=>!topSetLower.has(u.toLowerCase()));
+  const shuffledOthers = shuffleSeed(others, "DAY-"+todayStr);
 
-      // diğerleri
-      const topLower = new Set(topFixed.map(u=>u.toLowerCase()));
-      const others = base.filter(u => !topLower.has(u.toLowerCase()));
+  // Final sıralama: topOrdered (1..1000) + diğerleri
+  const list = topOrdered.concat(shuffledOthers);
+  const idx = new Map(); list.forEach((u,i)=>idx.set(u.toLowerCase(), i));
 
-      $("#total").textContent = base.length;
-      $("#prioCount").textContent = topFixed.length;
+  document.getElementById("total").textContent = base.length;
+  return { list, idx, topOrdered };
+}
 
-      return {base, topFixed, others};
-    }
+/*** UI rendering ***/
+function renderTop5(list){
+  const ul = document.getElementById("top5");
+  ul.innerHTML = "";
+  const top5 = list.slice(0,5);
+  top5.forEach((u,i)=>{
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <div class="item">
+        <div class="n">${i+1}</div>
+        <img class="avatar" src="${avatar(u)}" onerror="this.style.display='none';this.nextElementSibling.style.marginLeft='0'">
+        <a class="handle" href="${igUrl(u)}" target="_blank">@${u}</a>
+        <span class="trophy">${i===0?"🥇":i===1?"🥈":i===2?"🥉":""}</span>
+      </div>`;
+    ul.appendChild(li);
+  });
+}
 
-    /* ---------- sıralama üret ---------- */
-    function buildLeaderboard(base, topFixed, others, dateStr){
-      // diğerleri günlük deterministik karıştırılır
-      const shuffled = shuffleSeed(others, "DAY-"+dateStr);
-      const list = topFixed.concat(shuffled);
+function renderTable(list, page=1, pageSize=100){
+  const start = (page-1)*pageSize;
+  const items = list.slice(start, start+pageSize);
+  const tb = document.querySelector("#tbl tbody");
+  tb.innerHTML = "";
 
-      // index haritası
-      const idx = new Map(); list.forEach((u,i)=> idx.set(u.toLowerCase(),i));
-      return {list, idx, topFixedCount: topFixed.length};
-    }
+  for(let i=0;i<items.length;i++){
+    const u = items[i];
+    const rank = start + i + 1;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="rank">${rank}</td>
+      <td>
+        <img class="avatar" src="${avatar(u)}"
+             onerror="this.style.display='none';">
+        <a class="handle" href="${igUrl(u)}" target="_blank">@${u}</a>
+      </td>
+      <td>${rank<=1000?'<span class="tag-ok">Öncelik</span>':''}</td>`;
+    tb.appendChild(tr);
+  }
+}
 
-    /* ---------- renderlar ---------- */
-    function renderTable(lb, page=1, pageSize=100, highlightUser=null){
-      const start = (page-1)*pageSize;
-      const items = lb.list.slice(start, start+pageSize);
-      const tb = $("#tbl tbody");
-      tb.innerHTML = "";
+function mountPagination(maxBy100){
+  const sel = document.getElementById("page");
+  sel.innerHTML = "";
+  for(let p=1;p<=maxBy100;p++){
+    const opt = document.createElement("option");
+    opt.value = p; opt.textContent = p;
+    sel.appendChild(opt);
+  }
+}
 
-      let hiRow = null;
+/*** "Benim sıram" ***/
+function showYou(username, LB){
+  const u = (username||"").trim().replace(/^@/,"");
+  const youCard = document.getElementById("youCard");
+  const title = document.getElementById("youTitle");
+  const neigh = document.getElementById("youNeighbors");
+  if(!u){ youCard.classList.remove("show"); return; }
 
-      for (let i=0;i<items.length;i++){
-        const rank = start+i+1;
-        const u = items[i];
-        const tag = rank <= lb.topFixedCount ? 'Öncelik' : '';
-        const userLink = `https://www.instagram.com/${u}`;
+  const i = LB.idx.get(u.toLowerCase());
+  if(i==null){
+    youCard.classList.add("show");
+    title.innerHTML = `<span class="pill pill-green">@${u}</span> bugün listede bulunamadı.`;
+    neigh.textContent = "";
+    return;
+  }
+  const rank = i+1, total = LB.list.length, pct = ((rank/total)*100).toFixed(2);
+  const from = Math.max(0, i-3), to = Math.min(total, i+4);
+  const neighbors = LB.list.slice(from, to).map((x,j)=> `${from+j+1}. @${x}`).join(" • ");
 
-        const rowHTML =
-          `<tr>
-            <td>${rank}</td>
-            <td>
-              <a class="userLink" href="${userLink}" target="_blank" rel="noreferrer">
-                <span class="userCell">
-                  <img class="ava"
-                       src="${avatarURL(u)}"
-                       referrerpolicy="no-referrer"
-                       onerror="this.onerror=null; this.src='${avatarFallback(u)}';"
-                       alt="">
-                  @${u}
-                </span>
-              </a>
-            </td>
-            <td>${tag?`<span class="chip">${tag}</span>`:''}</td>
-          </tr>`;
-        tb.insertAdjacentHTML("beforeend", rowHTML);
+  youCard.classList.add("show");
+  title.innerHTML = `<span class="pill pill-green">@${u}</span> → #${rank} (Top %${pct})`;
+  neigh.textContent = neighbors;
 
-        if (highlightUser && u.toLowerCase() === highlightUser.toLowerCase()){
-          hiRow = tb.lastElementChild;
-          hiRow.classList.add("tr-hi");
-        }
-      }
+  // Eğer Top100 tablosunda görmek istiyorsa doğru sayfayı açalım
+  const pageNeeded = Math.ceil(Math.min(rank,1000)/100);
+  const sel = document.getElementById("page");
+  if(sel.value != String(pageNeeded)){ sel.value = String(pageNeeded); renderTable(LB.list, pageNeeded); }
+}
 
-      // seçilen satıra yumuşak scroll
-      if(hiRow){
-        setTimeout(()=> hiRow.scrollIntoView({behavior:"smooth", block:"center"}), 50);
-      }
-    }
+/*** Başlat ***/
+let LB=null;
+(async function(){
+  LB = await loadData();
 
-    function renderTop5(lb){
-      const box = $("#top5");
-      box.innerHTML = "";
-      const first5 = lb.list.slice(0,5);
+  // Sağ panel ilk 5
+  renderTop5(LB.list);
 
-      first5.forEach((u, i)=>{
-        const rank = i+1;
-        let icon='';
-        if(rank===1) icon = '<span class="cup gold">🏆</span>';
-        else if(rank===2) icon = '<span class="cup silver">🏆</span>';
-        else if(rank===3) icon = '<span class="cup bronze">🏆</span>';
+  // Pagination (sadece top 1000 için 10 sayfa)
+  mountPagination(Math.ceil(Math.min(LB.list.length, 1000)/100));
 
-        box.insertAdjacentHTML("beforeend",
-          `<div class="top5-row" style="margin-bottom:10px">
-            <div class="rank">${rank}</div>
-            <img class="ava"
-                 src="${avatarURL(u)}"
-                 referrerpolicy="no-referrer"
-                 onerror="this.onerror=null; this.src='${avatarFallback(u)}';"
-                 alt="">
-            <a class="userLink" href="https://www.instagram.com/${u}" target="_blank" rel="noreferrer">@${u}</a>
-            <div style="margin-left:auto">${icon}</div>
-          </div>`);
-      });
-    }
+  // İlk render
+  renderTable(LB.list, 1);
 
-    // üstte sonuç barını doldur
-    function showBanner(u, rank){
-      const el = $("#youBar");
-      el.innerHTML =
-        `<img class="ava"
-              src="${avatarURL(u)}"
-              referrerpolicy="no-referrer"
-              onerror="this.onerror=null; this.src='${avatarFallback(u)}';"
-              alt="">
-         <a class="userLink" href="https://www.instagram.com/${u}" target="_blank" rel="noreferrer">@${u}</a>
-         <span class="pill">#${rank}</span>`;
-      el.style.display = "flex";
-    }
-
-    function showUser(username, lb){
-      const u = (username||"").trim().replace(/^@/,"");
-      if(!u) return;
-      const i = lb.idx.get(u.toLowerCase());
-      if(i==null){ 
-        $("#youBar").style.display="none";
-        alert("@"+u+" bugün listede bulunamadı."); 
-        return; 
-      }
-      const rank = i+1;
-      showBanner(u, rank);
-
-      const page = Math.floor(i/100)+1;
-      $("#page").value = String(page);
-      renderTable(lb, page, 100, u);
-    }
-
-    /* ---------- init ---------- */
-    let LB=null;
-    (async function(){
-      try{
-        const data = await loadData();
-        LB = buildLeaderboard(data.base, data.topFixed, data.others, todayStr);
-        renderTable(LB, 1, 100);
-        renderTop5(LB);
-      }catch(err){
-        console.error(err);
-        alert("Veri yüklenemedi. Lütfen daha sonra tekrar deneyin.");
-      }
-    })();
-
-    // olaylar
-    $("#btnPage").onclick = ()=>{
-      const p = parseInt($("#page").value,10)||1;
-      renderTable(LB, p, 100);
-      $("#youBar").style.display="none";
-    };
-    $("#btnShow").onclick = ()=>{
-      showUser($("#q").value, LB);
-    };
-    $("#q").addEventListener("keydown",(e)=>{ if(e.key==="Enter") $("#btnShow").click(); });
-  </script>
+  // Olaylar
+  document.getElementById("btnPage").onclick = ()=>{
+    const p = parseInt(document.getElementById("page").value,10)||1;
+    renderTable(LB.list, p);
+  };
+  document.getElementById("btnFind").onclick = ()=>{
+    const v = document.getElementById("search").value;
+    showYou(v, LB);
+  };
+  // enter ile ara
+  document.getElementById("search").addEventListener("keydown",e=>{
+    if(e.key==="Enter"){ document.getElementById("btnFind").click(); }
+  });
+})();
+</script>
 </body>
 </html>
