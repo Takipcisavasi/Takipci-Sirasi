@@ -6,283 +6,231 @@
   <title>Takipçi Savaşı</title>
   <style>
     :root{
-      --bg:#0b0b12; --card:#141422; --muted:#aaa; --text:#eee; --border:#26263a;
-      --accent:#7e86ff; --accent-2:#5a64ff; --ok:#15c27a;
-      --chip:#1d1d2b; --chip-b:#32324a;
-      --highlight:#103d2c; --highlight-border:#20c384;
+      --bg:#0b0b12; --card:#141422; --card2:#10101a;
+      --border:#26263a; --muted:#a9a9b5; --text:#eaeaf2;
+      --accent:#7c83ff; --accent-2:#5b61e8; --good:#39d98a; --chip:#1f2030;
     }
     *{box-sizing:border-box}
-    html,body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    html,body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Arial}
     a{color:inherit;text-decoration:none}
-    .wrap{max-width:1150px;margin:0 auto;padding:16px}
-    header{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
-    h1{margin:0;font-size:22px}
-    .badge{background:var(--chip);border:1px solid var(--chip-b);padding:6px 10px;border-radius:999px;color:#d0d0ff;font-size:12px}
-    .btn{background:var(--accent);border:0;color:#fff;padding:10px 14px;border-radius:10px;cursor:pointer}
-    .ghost{background:#1c1c2a;color:#cfd0ff}
-    .btn:active{transform:translateY(1px)}
+    .wrap{max-width:1200px;margin:0 auto;padding:18px}
+    header{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    h1{font-size:20px;margin:0}
+    .tag{background:var(--chip);border:1px solid var(--border);color:var(--muted);padding:6px 10px;border-radius:999px;font-size:12px}
     .grow{flex:1}
-    input,select{background:#10101a;color:var(--text);border:1px solid #2b2b3c;border-radius:10px;padding:10px 12px}
+    .btn{background:var(--accent);border:none;color:#fff;padding:10px 12px;border-radius:10px;cursor:pointer}
+    .btn:active{transform:translateY(1px)}
+    .btn-ghost{background:var(--chip);color:var(--text);border:1px solid var(--border)}
     .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px}
-    .grid{display:grid;grid-template-columns:2fr 1fr;gap:12px}
-    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+    input,select{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:10px;border-radius:10px}
+    main{margin-top:14px;display:grid;grid-template-columns: 1fr 320px;gap:14px}
+    @media(max-width:980px){main{grid-template-columns:1fr}}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px}
+    .card h3{margin:0 0 10px 0;font-size:14px;color:var(--muted)}
     table{width:100%;border-collapse:collapse}
-    th,td{padding:10px;border-bottom:1px solid #1c1c2b}
-    th{color:var(--muted);font-weight:600;text-align:left}
+    th,td{padding:9px 8px;border-bottom:1px solid var(--border)}
+    th{font-weight:600;color:var(--muted);text-align:left}
+    tbody tr:hover{background:#0f0f18}
     .muted{color:var(--muted)}
+    .chip{background:var(--chip);border:1px solid var(--border);border-radius:999px;padding:2px 8px;font-size:12px}
+    .me{background:#0d1b12 !important}
+    .me td{color:#a3ffca}
     .right{margin-left:auto}
-    .top5-item{display:flex;align-items:center;gap:10px;background:#11111b;border:1px solid var(--border);padding:10px;border-radius:12px}
-    .rankDot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#1a1a27;border:1px solid #2b2b3c;color:#cfd0ff;font-weight:700}
-    .cup{font-size:14px}
-    .success{background:#11251d;border:1px solid #1e6346;color:#73f0b9}
-    .hl{background:var(--highlight)!important;border-left:3px solid var(--highlight-border)}
-    .chips{display:flex;gap:8px;flex-wrap:wrap}
-    .chip{background:var(--chip);border:1px solid var(--chip-b);padding:6px 10px;border-radius:999px;font-size:12px}
-    .footer{opacity:.6;font-size:12px;margin-top:8px}
+    .top5 li{display:flex;align-items:center;gap:10px;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:8px}
+    .idx{width:28px;height:28px;border-radius:8px;background:var(--chip);display:grid;place-items:center;color:var(--muted);font-weight:600}
+    .trophy{font-size:16px}
+    .top1 .idx{background:linear-gradient(90deg,#ffd54f,#ffea00);color:#4a3f00}
+    .top2 .idx{background:linear-gradient(90deg,#d7d7d7,#f3f3f3);color:#2f2f2f}
+    .top3 .idx{background:linear-gradient(90deg,#f4a261,#ffcc80);color:#4a2500}
+    .you{background:#0d1b12;border:1px dashed #295c44}
+    .you strong{color:#71ffb2}
+    .hidden{display:none}
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
       <h1>Takipçi Savaşı</h1>
-      <span class="chip" id="today"></span>
-      <span class="badge">Toplam <b id="total">0</b> kişi</span>
-      <span class="badge">Öncelik: <b id="activeCount">0</b></span>
+      <span class="tag" id="metaTotal">Toplam 0 kişi</span>
+      <span class="tag" id="metaTop">Öncelik: 1000</span>
       <div class="grow"></div>
-      <a class="badge" href="https://instagram.com/takipcisavasi" target="_blank" rel="noopener">instagram.com/takipcisavasi</a>
+      <a class="tag" href="https://www.instagram.com/takipcisavasi" target="_blank" rel="noopener">instagram.com/takipcisavasi</a>
     </header>
 
-    <div class="row" style="margin-bottom:12px">
-      <input id="q" placeholder="@kullanıcı bul" class="grow" />
-      <button id="btnFind" class="btn">Sırayı Göster</button>
-      <span class="chip" id="foundInfo" style="display:none"></span>
-      <div class="right row">
-        <label class="muted">Sayfa:</label>
-        <select id="page"></select>
-        <button id="btnPage" class="btn ghost">Görüntüle</button>
-      </div>
+    <div class="row" style="margin-top:10px">
+      <input id="q" placeholder="@kullanıcı bul" class="grow">
+      <button class="btn" id="btnFind">Sırayı Göster</button>
+      <label class="muted">Sayfa</label>
+      <select id="pageSel"></select>
+      <button class="btn-ghost" id="btnPage">Görüntüle</button>
     </div>
 
-    <div class="grid">
+    <main>
       <section class="card">
-        <div class="row" style="margin-bottom:8px">
-          <strong>Top 100</strong>
-          <div class="right chips">
-            <span class="chip">İlk 1000 sabit, diğerleri sabit karışık</span>
-          </div>
+        <div class="row">
+          <h3>Top 100</h3>
+          <div class="right muted" id="today"></div>
         </div>
-        <table id="tbl">
-          <thead><tr><th style="width:56px">#</th><th>Kullanıcı</th><th class="muted" style="width:130px">Not</th></tr></thead>
-          <tbody></tbody>
+        <table>
+          <thead><tr><th>#</th><th>Kullanıcı</th><th class="muted">Not</th></tr></thead>
+          <tbody id="tbody"></tbody>
         </table>
-        <div class="footer muted">© 2025</div>
       </section>
 
       <aside class="card">
-        <div class="row" style="margin-bottom:8px">
-          <strong>İlk 5</strong>
+        <h3>İlk 5</h3>
+        <ol id="top5" class="top5" style="list-style:none;padding:0;margin:0"></ol>
+
+        <div id="youCard" class="card you hidden" style="margin-top:12px">
+          <strong id="youTitle">@kullanıcı</strong>
+          <div id="youInfo" class="muted" style="margin-top:6px"></div>
         </div>
-        <div id="top5" class="row" style="flex-direction:column;gap:8px"></div>
       </aside>
-    </div>
+    </main>
   </div>
 
 <script>
-/* ========== Yardımcılar ========== */
-function parseCSV(raw){
-  return raw.split(/\r?\n/)
-    .map(s=>s.trim())
-    .filter(Boolean)
-    .map(line=>{
-      // "1. kullanici_adi" veya "1) @kullanici" gibi satırlardan SADECE kullanıcıyı al
-      // son kelimeyi al, baştaki @ işaretini temizle
-      const parts=line.split(/\s+/);
-      const last=parts[parts.length-1];
-      return last.replace(/^@/,'');
-    });
-}
-
-// tek seferlik deterministik karıştırma
-function makeSeed(){
-  const k='takipci_savasi_static_seed';
-  let s=localStorage.getItem(k);
-  if(!s){ s=String(Math.floor(Math.random()*1e9)); localStorage.setItem(k,s); }
-  return Number(s)>>>0;
-}
-function xmur3(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19;}return function(){h=Math.imul(h^(h>>>16),2246822507);h=Math.imul(h^(h>>>13),3266489909);return(h^(h>>>16))>>>0;};}
-function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}
-function shuffleDeterministic(arr,seedNumber){
-  const rand=mulberry32(seedNumber);
-  const a=arr.slice();
-  for(let i=a.length-1;i>0;i--){
-    const j=Math.floor(rand()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
-  }
+/* ---------- PRNG ---------- */
+function xmur3(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19}return function(){h=Math.imul(h^(h>>>16),2246822507);h=Math.imul(h^(h>>>13),3266489909);return (h^(h>>>16))>>>0}}
+function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296}}
+function shuffleDeterministic(arr, seedNum){
+  const r = mulberry32(seedNum); const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){const j=(r()*(i+1))|0; [a[i],a[j]]=[a[j],a[i]]}
   return a;
 }
 
-/* ========== Tarih / Başlık ========== */
-const todayStr=new Date().toISOString().slice(0,10);
-document.getElementById("today").textContent=todayStr;
+/* ---- Sabit seed (tüm cihazlarda aynı sıra) ---- */
+const GLOBAL_SEED_TEXT = "takipcisavasi-v1";
+const GLOBAL_SEED_NUM  = xmur3(GLOBAL_SEED_TEXT)();
 
-/* ========== Veri ========== */
+/* ---------- Helpers ---------- */
+const fmtDate = d => d.toISOString().slice(0,10);
+document.getElementById('today').textContent = fmtDate(new Date());
+
+/* ---------- Data load ---------- */
 async function loadData(){
-  const [csvAll,csvTop,bans]=await Promise.all([
-    fetch("./data/followers.csv").then(r=>r.text()),
-    fetch("./data/top1000.csv").then(r=>r.text()),
-    fetch("./data/bans.json").then(r=>r.json()).catch(()=>[])
+  const v=fmtDate(new Date()); // basit cache-buster
+  const [csvAll,csvTop,bans] = await Promise.all([
+    fetch('./data/followers.csv?v='+v).then(r=>r.text()),
+    fetch('./data/top1000.csv?v='+v).then(r=>r.text()).catch(()=>''), // top1000 zorunlu
+    fetch('./data/bans.json?v='+v).then(r=>r.json()).catch(()=>[])
   ]);
+  const followers = csvAll.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  const top1000  = csvTop.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  const banSet = new Set((bans||[]).map(x=>x.toLowerCase()));
 
-  const followers=parseCSV(csvAll);
-  const topCSV=parseCSV(csvTop);
-
-  const banSet=new Set((bans||[]).map(s=>s.toLowerCase()));
-  const base=followers.filter(u=>u && !banSet.has(u.toLowerCase()));
-
-  // ilk1000 (top1k) CSV sırası korunacak; base içinde olanlar
-  const baseLower=new Set(base.map(u=>u.toLowerCase()));
-  const top = topCSV.filter(u=>baseLower.has(u.toLowerCase()));
-
-  // diğerleri
-  const topLower=new Set(top.map(u=>u.toLowerCase()));
-  const others=base.filter(u=>!topLower.has(u.toLowerCase()));
-
-  document.getElementById("total").textContent=base.length;
-  document.getElementById("activeCount").textContent=topCSV.length;
-
-  return {base, top};
+  // banları temizle
+  const base = followers.filter(u=>!banSet.has(u.toLowerCase()));
+  document.getElementById('metaTotal').textContent = "Toplam " + base.length + " kişi";
+  document.getElementById('metaTop').textContent   = "Öncelik: 1000";
+  return {base, top1000};
 }
 
-/* ========== Sıralama / Render ========== */
-const PAGE_SIZE=100;
-let LB=null;
+/* ---------- Build leaderboard ---------- */
+function buildLeaderboard(base, top1000){
+  // Top 1000: orijinal listedeki sırayla (banlanmışlar zaten base’den çıkarıldı)
+  const baseLower = new Set(base.map(u=>u.toLowerCase()));
+  const fixedTop  = top1000.filter(u=>baseLower.has(u.toLowerCase()));
 
-function buildLeaderboard(base, top){
-  // diğerleri deterministik shuffle (refresh ile değişmesin)
-  const seed=makeSeed(); // sabit
-  const othersSet=new Set(top.map(x=>x.toLowerCase()));
-  const others=base.filter(u=>!othersSet.has(u.toLowerCase()));
-  const shuffled=shuffleDeterministic(others, seed);
+  // Others: deterministik karıştır
+  const topSet = new Set(fixedTop.map(u=>u.toLowerCase()));
+  const others = base.filter(u=>!topSet.has(u.toLowerCase()));
+  const shuffled = shuffleDeterministic(others, GLOBAL_SEED_NUM);
 
-  const list=top.concat(shuffled);
-  const idx=new Map();
-  list.forEach((u,i)=>idx.set(u.toLowerCase(),i));
-  return {list, idx, top};
+  const list = fixedTop.concat(shuffled);
+  const idx  = new Map(); list.forEach((u,i)=>idx.set(u.toLowerCase(), i));
+  return { list, idx, fixedTop };
 }
 
-function fillPageSelect(total){
-  const pages=Math.max(1,Math.ceil(total/PAGE_SIZE));
-  const sel=document.getElementById("page");
-  sel.innerHTML='';
-  for(let i=1;i<=pages;i++){
-    const opt=document.createElement('option');
-    opt.value=String(i);
-    opt.textContent=String(i);
-    sel.appendChild(opt);
+/* ---------- UI ---------- */
+function renderTop5(list){
+  const ul = document.getElementById('top5'); ul.innerHTML='';
+  const labels=['🥇','🥈','🥉','',''];
+  for(let i=0;i<5 && i<list.length;i++){
+    const li=document.createElement('li');
+    if(i===0) li.classList.add('top1'); if(i===1) li.classList.add('top2'); if(i===2) li.classList.add('top3');
+    li.innerHTML = `<div class="idx">${i+1}</div><div>@${escapeHtml(list[i])}</div>
+                    <div class="right trophy">${labels[i]||''}</div>`;
+    ul.appendChild(li);
   }
 }
 
-function renderTable(list,page=1,highlightUser){
-  const start=(page-1)*PAGE_SIZE;
-  const items=list.slice(start,start+PAGE_SIZE);
-  const tb=document.querySelector("#tbl tbody");
-  tb.innerHTML='';
-
-  const endHighlight = highlightUser ? highlightUser.toLowerCase() : null;
-
-  for(let i=0;i<items.length;i++){
-    const tr=document.createElement('tr');
-    const rank=start+i+1;
-
-    const td1=document.createElement('td'); td1.textContent=rank;
-    const td2=document.createElement('td'); td2.textContent='@'+items[i];
-    const td3=document.createElement('td'); td3.className='muted';
-    if(rank<=1000) td3.textContent='Öncelik';
-
-    tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
-
-    if(endHighlight && items[i].toLowerCase()===endHighlight){
-      tr.classList.add('hl');
-    }
+function renderTable(list, page=1, pageSize=100, highlightUser=''){
+  const start=(page-1)*pageSize, end=Math.min(start+pageSize, list.length);
+  const tb = document.getElementById('tbody'); tb.innerHTML='';
+  for(let i=start;i<end;i++){
+    const u=list[i]; const tr=document.createElement('tr');
+    const isTop=i<1000 ? "Öncelik" : "";
+    tr.innerHTML=<td>${i+1}</td><td>@${escapeHtml(u)}</td><td class="muted">${isTop}</td>;
+    if(highlightUser && u.toLowerCase()===highlightUser.toLowerCase()) tr.classList.add('me');
     tb.appendChild(tr);
   }
 }
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]))}
 
-function renderTop5(top){
-  const c=document.getElementById('top5');
-  c.innerHTML='';
-  const first5=top.slice(0,5);
-  first5.forEach((u,i)=>{
-    const row=document.createElement('div');
-    row.className='top5-item';
-    const dot=document.createElement('div');
-    dot.className='rankDot';
-    dot.textContent=String(i+1);
-    const name=document.createElement('div');
-    name.textContent='@'+u;
-    const cup=document.createElement('div');
-    cup.className='cup';
-    if(i===0) cup.textContent='🏆';
-    else if(i===1) cup.textContent='🥈';
-    else if(i===2) cup.textContent='🥉';
-    row.appendChild(dot); row.appendChild(name); row.appendChild(cup);
-    c.appendChild(row);
-  });
+function fillPages(total, pageSize=100){
+  const sel=document.getElementById('pageSel'); sel.innerHTML='';
+  const pages=Math.max(1, Math.ceil(total/pageSize));
+  for(let i=1;i<=pages;i++){ const o=document.createElement('option'); o.value=o.textContent=i; sel.appendChild(o); }
 }
 
-/* ========== Arama / Yardımcı ========== */
-function scrollToRank(rank){
-  const page=Math.max(1,Math.ceil(rank/PAGE_SIZE));
-  document.getElementById('page').value=String(page);
-  renderTable(LB.list, page);
-  // tablo renderlandıktan sonra row’u highlight edelim
-  const tb=document.querySelector("#tbl tbody");
-  const idxInPage=(rank-1)%PAGE_SIZE;
-  const tr=tb.children[idxInPage];
-  if(tr){ tr.classList.add('hl'); tr.scrollIntoView({behavior:'smooth',block:'center'}); }
-}
-
-function findAndShow(username){
-  if(!username) return;
-  const u=username.replace(/^@/,'').trim().toLowerCase();
-  const pos = LB.idx.get(u);
-  const info=document.getElementById('foundInfo');
-  if(pos==null){
-    info.textContent='@'+username+' bulunamadı';
-    info.className='chip';
-    info.style.display='inline-block';
+/* ---------- Search & "Benim sıram" ---------- */
+function showYouCard(username, lb){
+  const c=document.getElementById('youCard');
+  if(!username){ c.classList.add('hidden'); return; }
+  const i = lb.idx.get(username.toLowerCase());
+  if(i==null){ c.classList.remove('hidden'); c.classList.add('you'); 
+    document.getElementById('youTitle').textContent = '@'+username;
+    document.getElementById('youInfo').textContent  = 'Bugün listede bulunamadı.';
     return;
   }
-  const rank=pos+1;
-  info.textContent='@'+username+' → #'+rank;
-  info.className='chip success';
-  info.style.display='inline-block';
-  scrollToRank(rank);
+  const rank=i+1, total=lb.list.length;
+  const from=Math.max(0,i-3), to=Math.min(total,i+4);
+  const neighbors = lb.list.slice(from,to).map((x,j)=>${from+j+1}. @${x}).join('  •  ');
+  c.classList.remove('hidden');
+  document.getElementById('youTitle').textContent = @${lb.list[i]} → #${rank};
+  document.getElementById('youInfo').textContent  = neighbors;
 }
 
-/* ========== Başlat ========== */
-(async function(){
-  const data = await loadData();
-  LB = buildLeaderboard(data.base, data.top);
+/* ---------- App ---------- */
+let LB=null; // {list, idx, fixedTop}
+let CURRENT_PAGE=1;
 
-  fillPageSelect(LB.list.length);
-  renderTable(LB.list,1);
-  renderTop5(LB.top);
+(async function init(){
+  try{
+    const data = await loadData();
+    LB = buildLeaderboard(data.base, data.top1000);
+
+    // ilk tablo + top5
+    renderTop5(LB.list);
+    fillPages(LB.list.length, 100);
+    renderTable(LB.list, 1);
+
+    // Arama/göster butonları
+    document.getElementById('btnFind').onclick = ()=>{
+      const q = document.getElementById('q').value.trim().replace(/^@/,'');
+      if(!q){ showYouCard('', LB); return; }
+      const i = LB.idx.get(q.toLowerCase());
+      if(i!=null){
+        CURRENT_PAGE = Math.floor(i/100)+1;
+        document.getElementById('pageSel').value = CURRENT_PAGE;
+        renderTable(LB.list, CURRENT_PAGE, 100, q);
+      }else{
+        // listede yoksa mevcut sayfayı koru, highlight yok
+        renderTable(LB.list, CURRENT_PAGE, 100);
+      }
+      showYouCard(q, LB);
+    };
+    document.getElementById('btnPage').onclick = ()=>{
+      const p = parseInt(document.getElementById('pageSel').value,10)||1;
+      CURRENT_PAGE=p; renderTable(LB.list, p, 100);
+      showYouCard('', LB);
+    };
+  }catch(e){
+    console.error(e);
+    alert('Veriler yüklenemedi.'); 
+  }
 })();
-
-/* ========== UI ========== */
-document.getElementById('btnPage').onclick=()=>{
-  const p=parseInt(document.getElementById('page').value,10)||1;
-  renderTable(LB.list,p);
-};
-document.getElementById('btnFind').onclick=()=>{
-  const q=document.getElementById('q').value.trim();
-  findAndShow(q);
-};
-document.getElementById('q').addEventListener('keydown',e=>{
-  if(e.key==='Enter'){ document.getElementById('btnFind').click(); }
-});
 </script>
 </body>
 </html>
