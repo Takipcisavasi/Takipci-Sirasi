@@ -4,157 +4,285 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Takipçi Savaşı</title>
-  <meta name="color-scheme" content="dark" />
   <style>
     :root{
-      --bg:#0b0b12;--card:#141422;--muted:#a9adbb;--text:#e8eaf2;
-      --border:#222432;--accent:#7c7cff;--pill:#1e1e2e;
-      --success:#10b981;
+      --bg:#0b0b12; --card:#141422; --muted:#aaa; --text:#eee; --border:#26263a;
+      --accent:#7e86ff; --accent-2:#5a64ff; --ok:#15c27a;
+      --chip:#1d1d2b; --chip-b:#32324a;
+      --highlight:#103d2c; --highlight-border:#20c384;
     }
-    body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Roboto,Arial}
-    .wrap{max-width:1200px;margin:0 auto;padding:18px}
-    header{display:flex;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:1px solid var(--border);padding-bottom:8px}
-    .title{font-weight:700;font-size:20px}
-    .badge{background:var(--pill);border:1px solid var(--border);border-radius:999px;padding:6px 10px;font-size:12px;color:var(--muted)}
-    .spacer{flex:1}
-    .ig-btn{padding:8px 12px;border:1px solid var(--border);background:#15162a;border-radius:999px;color:#c8cbff;text-decoration:none}
-    .controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
-    input,select,button{background:#10121c;border:1px solid var(--border);color:var(--text);padding:8px;border-radius:8px;font-size:14px}
-    button{cursor:pointer;background:var(--accent);border:none}
-    .grid{display:grid;grid-template-columns:1fr 300px;gap:16px;margin-top:16px}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:1150px;margin:0 auto;padding:16px}
+    header{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+    h1{margin:0;font-size:22px}
+    .badge{background:var(--chip);border:1px solid var(--chip-b);padding:6px 10px;border-radius:999px;color:#d0d0ff;font-size:12px}
+    .btn{background:var(--accent);border:0;color:#fff;padding:10px 14px;border-radius:10px;cursor:pointer}
+    .ghost{background:#1c1c2a;color:#cfd0ff}
+    .btn:active{transform:translateY(1px)}
+    .grow{flex:1}
+    input,select{background:#10101a;color:var(--text);border:1px solid #2b2b3c;border-radius:10px;padding:10px 12px}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px}
+    .grid{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
     table{width:100%;border-collapse:collapse}
-    th,td{border-bottom:1px solid var(--border);padding:8px;font-size:14px}
-    th{color:var(--muted);text-align:left}
-    tr:hover{background:#10121c}
-    .rank{width:36px;text-align:right;color:#9aa0b4}
-    .note-chip{background:#152226;color:#93e5c7;border:1px solid #1d3b37;font-size:12px;border-radius:999px;padding:3px 6px}
-    .handle{color:#eaf0ff}
-    .you-card{display:none;margin-top:10px}
-    .you-card.show{display:block}
-    .green{background:#052;border:1px solid #094;color:#aef1cd;padding:3px 8px;border-radius:999px;font-size:12px}
-    .top5 .item{display:flex;justify-content:space-between;padding:8px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px}
-    @media(max-width:900px){.grid{grid-template-columns:1fr}}
+    th,td{padding:10px;border-bottom:1px solid #1c1c2b}
+    th{color:var(--muted);font-weight:600;text-align:left}
+    .muted{color:var(--muted)}
+    .right{margin-left:auto}
+    .top5-item{display:flex;align-items:center;gap:10px;background:#11111b;border:1px solid var(--border);padding:10px;border-radius:12px}
+    .rankDot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#1a1a27;border:1px solid #2b2b3c;color:#cfd0ff;font-weight:700}
+    .cup{font-size:14px}
+    .success{background:#11251d;border:1px solid #1e6346;color:#73f0b9}
+    .hl{background:var(--highlight)!important;border-left:3px solid var(--highlight-border)}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{background:var(--chip);border:1px solid var(--chip-b);padding:6px 10px;border-radius:999px;font-size:12px}
+    .footer{opacity:.6;font-size:12px;margin-top:8px}
   </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div class="title">Takipçi Savaşı</div>
-    <span class="badge" id="today"></span>
-    <span class="badge">Toplam <span id="total">0</span> kişi</span>
-    <span class="badge">Öncelik: <span id="activeCount">1000</span></span>
-    <div class="spacer"></div>
-    <a class="ig-btn" href="https://www.instagram.com/takipcisavasi" target="_blank">instagram.com/takipcisavasi</a>
-  </header>
+  <div class="wrap">
+    <header>
+      <h1>Takipçi Savaşı</h1>
+      <span class="chip" id="today"></span>
+      <span class="badge">Toplam <b id="total">0</b> kişi</span>
+      <span class="badge">Öncelik: <b id="activeCount">0</b></span>
+      <div class="grow"></div>
+      <a class="badge" href="https://instagram.com/takipcisavasi" target="_blank" rel="noopener">instagram.com/takipcisavasi</a>
+    </header>
 
-  <div class="controls">
-    <input id="search" placeholder="@kullanıcı bul"/>
-    <button id="btnFind">Sırayı Göster</button>
-    <span class="spacer"></span>
-    <label>Sayfa</label>
-    <select id="page"></select>
-    <button id="btnPage">Görüntüle</button>
-  </div>
-
-  <div class="card you-card" id="youCard">
-    <div id="youTitle"></div>
-    <div id="youNeighbors" class="muted" style="margin-top:6px"></div>
-  </div>
-
-  <div class="grid">
-    <div class="card">
-      <table id="tbl">
-        <thead><tr><th class="rank">#</th><th>Kullanıcı</th><th>Not</th></tr></thead>
-        <tbody></tbody>
-      </table>
+    <div class="row" style="margin-bottom:12px">
+      <input id="q" placeholder="@kullanıcı bul" class="grow" />
+      <button id="btnFind" class="btn">Sırayı Göster</button>
+      <span class="chip" id="foundInfo" style="display:none"></span>
+      <div class="right row">
+        <label class="muted">Sayfa:</label>
+        <select id="page"></select>
+        <button id="btnPage" class="btn ghost">Görüntüle</button>
+      </div>
     </div>
-    <div class="card top5">
-      <h3>İlk 5</h3>
-      <div id="top5"></div>
+
+    <div class="grid">
+      <section class="card">
+        <div class="row" style="margin-bottom:8px">
+          <strong>Top 100</strong>
+          <div class="right chips">
+            <span class="chip">İlk 1000 sabit, diğerleri sabit karışık</span>
+          </div>
+        </div>
+        <table id="tbl">
+          <thead><tr><th style="width:56px">#</th><th>Kullanıcı</th><th class="muted" style="width:130px">Not</th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="footer muted">© 2025</div>
+      </section>
+
+      <aside class="card">
+        <div class="row" style="margin-bottom:8px">
+          <strong>İlk 5</strong>
+        </div>
+        <div id="top5" class="row" style="flex-direction:column;gap:8px"></div>
+      </aside>
     </div>
   </div>
-</div>
 
 <script>
-function xmur3(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19}return function(){h=Math.imul(h^(h>>>16),2246822507);h=Math.imul(h^(h>>>13),3266489909);return(h^(h>>>16))>>>0}}
-function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
-function shuffleSeed(arr,seedStr){const seed=xmur3(seedStr)();const rand=mulberry32(seed);const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a;}
+/* ========== Yardımcılar ========== */
+function parseCSV(raw){
+  return raw.split(/\r?\n/)
+    .map(s=>s.trim())
+    .filter(Boolean)
+    .map(line=>{
+      // "1. kullanici_adi" veya "1) @kullanici" gibi satırlardan SADECE kullanıcıyı al
+      // son kelimeyi al, baştaki @ işaretini temizle
+      const parts=line.split(/\s+/);
+      const last=parts[parts.length-1];
+      return last.replace(/^@/,'');
+    });
+}
 
+// tek seferlik deterministik karıştırma
+function makeSeed(){
+  const k='takipci_savasi_static_seed';
+  let s=localStorage.getItem(k);
+  if(!s){ s=String(Math.floor(Math.random()*1e9)); localStorage.setItem(k,s); }
+  return Number(s)>>>0;
+}
+function xmur3(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19;}return function(){h=Math.imul(h^(h>>>16),2246822507);h=Math.imul(h^(h>>>13),3266489909);return(h^(h>>>16))>>>0;};}
+function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}
+function shuffleDeterministic(arr,seedNumber){
+  const rand=mulberry32(seedNumber);
+  const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(rand()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+/* ========== Tarih / Başlık ========== */
 const todayStr=new Date().toISOString().slice(0,10);
 document.getElementById("today").textContent=todayStr;
 
+/* ========== Veri ========== */
 async function loadData(){
   const [csvAll,csvTop,bans]=await Promise.all([
     fetch("./data/followers.csv").then(r=>r.text()),
     fetch("./data/top1000.csv").then(r=>r.text()),
     fetch("./data/bans.json").then(r=>r.json()).catch(()=>[])
   ]);
-  const followers=csvAll.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-  const top1000=csvTop.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+
+  const followers=parseCSV(csvAll);
+  const topCSV=parseCSV(csvTop);
+
   const banSet=new Set((bans||[]).map(s=>s.toLowerCase()));
-  const base=followers.filter(u=>!banSet.has(u.toLowerCase()));
-  document.getElementById("total").textContent=base.length;
-  document.getElementById("activeCount").textContent=top1000.length;
-  return{base,top1000};
-}
+  const base=followers.filter(u=>u && !banSet.has(u.toLowerCase()));
 
-function buildLB(base,top1000){
+  // ilk1000 (top1k) CSV sırası korunacak; base içinde olanlar
   const baseLower=new Set(base.map(u=>u.toLowerCase()));
-  const fixedTop=top1000.filter(u=>baseLower.has(u.toLowerCase()));
-  const fixedLower=new Set(fixedTop.map(u=>u.toLowerCase()));
-  const others=base.filter(u=>!fixedLower.has(u.toLowerCase()));
-  const shuffledOthers=shuffleSeed(others,"STATIC-SEED");
-  const list=fixedTop.concat(shuffledOthers);
-  const idx=new Map();list.forEach((u,i)=>idx.set(u.toLowerCase(),i));
-  return{list,idx,fixedCount:fixedTop.length};
+  const top = topCSV.filter(u=>baseLower.has(u.toLowerCase()));
+
+  // diğerleri
+  const topLower=new Set(top.map(u=>u.toLowerCase()));
+  const others=base.filter(u=>!topLower.has(u.toLowerCase()));
+
+  document.getElementById("total").textContent=base.length;
+  document.getElementById("activeCount").textContent=topCSV.length;
+
+  return {base, top};
 }
 
-function renderTop5(list){
-  const top=list.slice(0,5);
-  document.getElementById("top5").innerHTML=top.map((h,i)=>
-    <div class="item"><div>${i+1}. ${h}</div><div>${i===0?"🏆":i===1?"🥈":i===2?"🥉":""}</div></div>).join("");
+/* ========== Sıralama / Render ========== */
+const PAGE_SIZE=100;
+let LB=null;
+
+function buildLeaderboard(base, top){
+  // diğerleri deterministik shuffle (refresh ile değişmesin)
+  const seed=makeSeed(); // sabit
+  const othersSet=new Set(top.map(x=>x.toLowerCase()));
+  const others=base.filter(u=>!othersSet.has(u.toLowerCase()));
+  const shuffled=shuffleDeterministic(others, seed);
+
+  const list=top.concat(shuffled);
+  const idx=new Map();
+  list.forEach((u,i)=>idx.set(u.toLowerCase(),i));
+  return {list, idx, top};
 }
 
-function renderTable(lb,page=1,pageSize=100,fixedCount=1000){
-  const start=(page-1)*pageSize;
-  const items=lb.list.slice(start,start+pageSize);
+function fillPageSelect(total){
+  const pages=Math.max(1,Math.ceil(total/PAGE_SIZE));
+  const sel=document.getElementById("page");
+  sel.innerHTML='';
+  for(let i=1;i<=pages;i++){
+    const opt=document.createElement('option');
+    opt.value=String(i);
+    opt.textContent=String(i);
+    sel.appendChild(opt);
+  }
+}
+
+function renderTable(list,page=1,highlightUser){
+  const start=(page-1)*PAGE_SIZE;
+  const items=list.slice(start,start+PAGE_SIZE);
   const tb=document.querySelector("#tbl tbody");
-  tb.innerHTML="";
-  items.forEach((handle,i)=>{
+  tb.innerHTML='';
+
+  const endHighlight = highlightUser ? highlightUser.toLowerCase() : null;
+
+  for(let i=0;i<items.length;i++){
+    const tr=document.createElement('tr');
     const rank=start+i+1;
-    tb.innerHTML+=<tr><td class="rank">${rank}</td><td>@${handle}</td><td>${rank<=fixedCount?'<span class="note-chip">Öncelik</span>':""}</td></tr>;
+
+    const td1=document.createElement('td'); td1.textContent=rank;
+    const td2=document.createElement('td'); td2.textContent='@'+items[i];
+    const td3=document.createElement('td'); td3.className='muted';
+    if(rank<=1000) td3.textContent='Öncelik';
+
+    tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
+
+    if(endHighlight && items[i].toLowerCase()===endHighlight){
+      tr.classList.add('hl');
+    }
+    tb.appendChild(tr);
+  }
+}
+
+function renderTop5(top){
+  const c=document.getElementById('top5');
+  c.innerHTML='';
+  const first5=top.slice(0,5);
+  first5.forEach((u,i)=>{
+    const row=document.createElement('div');
+    row.className='top5-item';
+    const dot=document.createElement('div');
+    dot.className='rankDot';
+    dot.textContent=String(i+1);
+    const name=document.createElement('div');
+    name.textContent='@'+u;
+    const cup=document.createElement('div');
+    cup.className='cup';
+    if(i===0) cup.textContent='🏆';
+    else if(i===1) cup.textContent='🥈';
+    else if(i===2) cup.textContent='🥉';
+    row.appendChild(dot); row.appendChild(name); row.appendChild(cup);
+    c.appendChild(row);
   });
 }
 
-function showYou(username,lb){
-  const u=(username||"").replace(/^@/,"");
-  const you=document.getElementById("youCard");
-  const title=document.getElementById("youTitle");
-  const neigh=document.getElementById("youNeighbors");
-  if(!u){you.classList.remove("show");return;}
-  const i=lb.idx.get(u.toLowerCase());
-  if(i==null){you.classList.add("show");title.textContent="@"+u+" bulunamadı";neigh.textContent="";return;}
-  const rank=i+1,total=lb.list.length,pct=((rank/total)*100).toFixed(2);
-  title.innerHTML=@${u} <span class="green">#${rank} (top %${pct})</span>;
-  const from=Math.max(0,i-3),to=Math.min(total,i+4);
-  neigh.textContent=lb.list.slice(from,to).map((x,j)=>${from+j+1}. @${x}).join(" • ");
-  you.classList.add("show");
+/* ========== Arama / Yardımcı ========== */
+function scrollToRank(rank){
+  const page=Math.max(1,Math.ceil(rank/PAGE_SIZE));
+  document.getElementById('page').value=String(page);
+  renderTable(LB.list, page);
+  // tablo renderlandıktan sonra row’u highlight edelim
+  const tb=document.querySelector("#tbl tbody");
+  const idxInPage=(rank-1)%PAGE_SIZE;
+  const tr=tb.children[idxInPage];
+  if(tr){ tr.classList.add('hl'); tr.scrollIntoView({behavior:'smooth',block:'center'}); }
 }
 
-let LB=null;
-(async function(){
-  const data=await loadData();
-  LB=buildLB(data.base,data.top1000);
-  for(let i=1;i<=Math.ceil(LB.list.length/100);i++){
-    const opt=document.createElement("option");opt.value=i;opt.textContent=i;
-    document.getElementById("page").append(opt);
+function findAndShow(username){
+  if(!username) return;
+  const u=username.replace(/^@/,'').trim().toLowerCase();
+  const pos = LB.idx.get(u);
+  const info=document.getElementById('foundInfo');
+  if(pos==null){
+    info.textContent='@'+username+' bulunamadı';
+    info.className='chip';
+    info.style.display='inline-block';
+    return;
   }
-  renderTop5(LB.list);
-  renderTable(LB,1,100,data.top1000.length);
-  document.getElementById("btnPage").onclick=()=>{const p=parseInt(document.getElementById("page").value)||1;renderTable(LB,p,100,data.top1000.length)};
-  document.getElementById("btnFind").onclick=()=>{showYou(document.getElementById("search").value,LB)};
+  const rank=pos+1;
+  info.textContent='@'+username+' → #'+rank;
+  info.className='chip success';
+  info.style.display='inline-block';
+  scrollToRank(rank);
+}
+
+/* ========== Başlat ========== */
+(async function(){
+  const data = await loadData();
+  LB = buildLeaderboard(data.base, data.top);
+
+  fillPageSelect(LB.list.length);
+  renderTable(LB.list,1);
+  renderTop5(LB.top);
 })();
+
+/* ========== UI ========== */
+document.getElementById('btnPage').onclick=()=>{
+  const p=parseInt(document.getElementById('page').value,10)||1;
+  renderTable(LB.list,p);
+};
+document.getElementById('btnFind').onclick=()=>{
+  const q=document.getElementById('q').value.trim();
+  findAndShow(q);
+};
+document.getElementById('q').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){ document.getElementById('btnFind').click(); }
+});
 </script>
 </body>
 </html>
