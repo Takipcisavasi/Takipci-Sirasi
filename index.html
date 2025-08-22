@@ -45,6 +45,8 @@
     .you{background:#101020;border:1px dashed var(--line);}
     .you strong{font-weight:700}
     .footer{padding:14px 18px;color:var(--mut);text-align:center}
+    .userCell{display:flex;align-items:center;gap:10px}
+    .avatar{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);object-fit:cover;background:#0f0f1b}
     @media (max-width:920px){main{grid-template-columns:1fr}}
   </style>
 </head>
@@ -72,7 +74,7 @@
     <section class="card">
       <div class="head row">
         <strong>Top 100</strong>
-        <span class="mut">İlk 1000 CSV’den; kalanlar seçilen güne göre deterministik karışır.</span>
+        <span class="mut">İlk 1000 CSV’den sabit; kalanlar seçilen güne göre deterministik karışır.</span>
         <div class="row" style="margin-left:auto">
           <label class="mut">Sayfa</label>
           <select id="page"></select>
@@ -134,27 +136,38 @@ async function loadData(){
     fetch("./data/top1000.csv?v="+v).then(r=>r.text()),
     fetch("./data/bans.json?v="+v).then(r=>r.ok?r.json():[])
   ]);
-  const followers = csvAll.split(/\r?\n/).map(s=>s.trim().replace(/^@/,"")).filter(Boolean);
-  const banset = new Set((bans||[]).map(s=>s.toLowerCase()));
-  const base = followers.filter(u=>u && !banset.has(u.toLowerCase()));
+  const banSet = new Set((bans||[]).map(s=>String(s).trim().replace(/^@/,"").toLowerCase()));
 
-  const topRaw = csvTop.split(/\r?\n/).map(s=>s.trim().replace(/^@/,"")).filter(Boolean);
+  const followers = csvAll.split(/\r?\n/)
+    .map(s=>s.trim().replace(/^@/,""))
+    .filter(Boolean)
+    .filter(u=>!banSet.has(u.toLowerCase()));
 
-  document.getElementById("total").textContent = base.length;
+  const topRaw = csvTop.split(/\r?\n/)
+    .map(s=>s.trim().replace(/^@/,""))
+    .filter(Boolean)
+    .filter(u=>!banSet.has(u.toLowerCase())); // banlıysa ayıklıyoruz ama SIRA KORUNUR
+
+  document.getElementById("total").textContent = followers.length;
   document.getElementById("activeCount").textContent = topRaw.length;
 
-  STATE.base = base;
-  STATE.top = topRaw;
+  STATE.base = followers;
+  STATE.top  = topRaw;
 }
 
-/*** BUILD: first 1000 fixed, rest shuffled by date ***/
+/*** BUILD: top1000 sabit, diğerleri günlük deterministik ***/
 function buildDaily(base, topRaw, dateStr){
-  const baseL = new Set(base.map(u=>u.toLowerCase()));
-  const top   = topRaw.filter(u=>baseL.has(u.toLowerCase()));      // CSV’deki sırayla korunur
-  const topL  = new Set(top.map(u=>u.toLowerCase()));
-  const tail  = base.filter(u=>!topL.has(u.toLowerCase()));        // diğerleri
-  const mixed = top.concat(shuffleSeed(tail,"DAY-"+dateStr));      // günlük deterministik
-  const idx   = new Map(); mixed.forEach((u,i)=>idx.set(u.toLowerCase(),i));
+  // top: CSV’deki sırayla, doğrudan
+  const top = Array.from(new Set(topRaw.map(u=>u.toLowerCase())))
+                 .map(lc => topRaw.find(x=>x.toLowerCase()===lc)); // orijinal sırayı muhafaza
+
+  // tail: base’ten top’ta olmayanlar
+  const topSet = new Set(top.map(u=>u.toLowerCase()));
+  const tail   = base.filter(u=>!topSet.has(u.toLowerCase()));
+
+  const mixed  = top.concat(shuffleSeed(tail,"DAY-"+dateStr)); // deterministik shuffle
+  const idx    = new Map(); mixed.forEach((u,i)=>idx.set(u.toLowerCase(),i));
+
   return { list:mixed, idx, topLen:top.length };
 }
 
@@ -167,13 +180,15 @@ function renderTop5(list){
   const box = document.getElementById("top5");
   box.innerHTML="";
   for(let i=0;i<5 && i<list.length;i++){
-    const u=list[i];
-    const icon = i===0?cupSVG("gold") : i===1?cupSVG("silver") : i===2?cupSVG("bronze") : "";
+    const u=list[i]; const icon = i===0?cupSVG("gold") : i===1?cupSVG("silver") : i===2?cupSVG("bronze") : "";
     box.insertAdjacentHTML("beforeend",
       `<div class="top5-row" style="margin-bottom:10px">
          <div class="rank">${i+1}</div>
-         <div style="flex:1 1 auto">
-           <a href="https://instagram.com/${u}" target="_blank" rel="noreferrer">@${u}</a>
+         <div style="flex:1 1 auto" class="userCell">
+           <img class="avatar" referrerpolicy="no-referrer" loading="lazy"
+                src="https://unavatar.io/instagram/${encodeURIComponent(u)}"
+                onerror="this.style.display='none'">
+           <a href="https://www.instagram.com/${u}" target="_blank" rel="noreferrer">@${u}</a>
          </div>
          ${icon}
        </div>`);
@@ -186,13 +201,19 @@ function renderTable(list, page=1, size=100, topLen=1000){
   tb.innerHTML="";
   const start=(page-1)*size, end=Math.min(list.length,start+size);
   for(let i=start;i<end;i++){
-    const u=list[i];
-    const rank=i+1;
+    const u=list[i]; const rank=i+1;
     const tag = rank<=topLen ? `<span class="tag">Öncelik</span>` : "";
     tb.insertAdjacentHTML("beforeend",
       `<tr>
         <td>${rank}</td>
-        <td><a href="https://instagram.com/${u}" target="_blank" rel="noreferrer">@${u}</a></td>
+        <td>
+          <div class="userCell">
+            <img class="avatar" referrerpolicy="no-referrer" loading="lazy"
+                 src="https://unavatar.io/instagram/${encodeURIComponent(u)}"
+                 onerror="this.style.display='none'">
+            <a href="https://www.instagram.com/${u}" target="_blank" rel="noreferrer">@${u}</a>
+          </div>
+        </td>
         <td>${tag}</td>
       </tr>`);
   }
