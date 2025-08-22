@@ -45,8 +45,13 @@
     .you{background:#101020;border:1px dashed var(--line);}
     .you strong{font-weight:700}
     .footer{padding:14px 18px;color:var(--mut);text-align:center}
+
+    /* avatar + user cell */
     .userCell{display:flex;align-items:center;gap:10px}
-    .avatar{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);object-fit:cover;background:#0f0f1b}
+    .ava{width:28px;height:28px;border-radius:999px;border:1px solid var(--line);background:#0e0e18;object-fit:cover}
+    .userLink{color:#cfd3ff}
+    .userLink:hover{text-decoration:underline}
+
     @media (max-width:920px){main{grid-template-columns:1fr}}
   </style>
 </head>
@@ -126,7 +131,10 @@ document.getElementById("day").value = todayStr;
 document.getElementById("day").setAttribute("max", todayStr);
 
 /*** STATE ***/
-const STATE = { base:[], top:[], LB:null, pageSize:100 };
+const STATE = { all:[], top:[], LB:null, pageSize:100 };
+
+/*** UTIL: normalize usernames to plain (no @, no spaces) ***/
+function norm(u){ return (u||"").trim().replace(/^@/,""); }
 
 /*** DATA LOAD ***/
 async function loadData(){
@@ -136,40 +144,33 @@ async function loadData(){
     fetch("./data/top1000.csv?v="+v).then(r=>r.text()),
     fetch("./data/bans.json?v="+v).then(r=>r.ok?r.json():[])
   ]);
-  const banSet = new Set((bans||[]).map(s=>String(s).trim().replace(/^@/,"").toLowerCase()));
+  const followers = csvAll.split(/\r?\n/).map(s=>norm(s)).filter(Boolean);
+  const banset = new Set((bans||[]).map(s=>s.toLowerCase()));
+  const base = followers.filter(u=>u && !banset.has(u.toLowerCase()));
 
-  const followers = csvAll.split(/\r?\n/)
-    .map(s=>s.trim().replace(/^@/,""))
-    .filter(Boolean)
-    .filter(u=>!banSet.has(u.toLowerCase()));
+  const topRaw = csvTop.split(/\r?\n/).map(s=>norm(s)).filter(Boolean);
 
-  const topRaw = csvTop.split(/\r?\n/)
-    .map(s=>s.trim().replace(/^@/,""))
-    .filter(Boolean)
-    .filter(u=>!banSet.has(u.toLowerCase())); // banlıysa ayıklıyoruz ama SIRA KORUNUR
-
-  document.getElementById("total").textContent = followers.length;
+  document.getElementById("total").textContent = base.length;
   document.getElementById("activeCount").textContent = topRaw.length;
 
-  STATE.base = followers;
-  STATE.top  = topRaw;
+  STATE.all = base;
+  STATE.top = topRaw;
 }
 
-/*** BUILD: top1000 sabit, diğerleri günlük deterministik ***/
-function buildDaily(base, topRaw, dateStr){
-  // top: CSV’deki sırayla, doğrudan
-  const top = Array.from(new Set(topRaw.map(u=>u.toLowerCase())))
-                 .map(lc => topRaw.find(x=>x.toLowerCase()===lc)); // orijinal sırayı muhafaza
-
-  // tail: base’ten top’ta olmayanlar
-  const topSet = new Set(top.map(u=>u.toLowerCase()));
-  const tail   = base.filter(u=>!topSet.has(u.toLowerCase()));
-
-  const mixed  = top.concat(shuffleSeed(tail,"DAY-"+dateStr)); // deterministik shuffle
-  const idx    = new Map(); mixed.forEach((u,i)=>idx.set(u.toLowerCase(),i));
-
-  return { list:mixed, idx, topLen:top.length };
+/*** BUILD:
+ *  topRaw başa sabit (orijinal sıra).
+ *  tail = followers - topRaw ; tail günlük karışır; sonra topRaw + tail.
+ */
+function buildDaily(all, topRaw, dateStr){
+  const topSet = new Set(topRaw.map(u=>u.toLowerCase()));
+  const tail = all.filter(u=>!topSet.has(u.toLowerCase()));
+  const mixed = topRaw.concat(shuffleSeed(tail,"DAY-"+dateStr));
+  const idx   = new Map(); mixed.forEach((u,i)=>idx.set(u.toLowerCase(),i));
+  return { list:mixed, idx, topLen:topRaw.length };
 }
+
+/*** AVATAR IMG URL (unavatar) ***/
+const avatarURL = (u)=> `https://unavatar.io/instagram/${encodeURIComponent(u)}`;
 
 /*** RENDER TOP5 ***/
 function cupSVG(cls){ return `
@@ -180,17 +181,14 @@ function renderTop5(list){
   const box = document.getElementById("top5");
   box.innerHTML="";
   for(let i=0;i<5 && i<list.length;i++){
-    const u=list[i]; const icon = i===0?cupSVG("gold") : i===1?cupSVG("silver") : i===2?cupSVG("bronze") : "";
+    const u=list[i];
+    const icon = i===0?cupSVG("gold") : i===1?cupSVG("silver") : i===2?cupSVG("bronze") : "";
     box.insertAdjacentHTML("beforeend",
       `<div class="top5-row" style="margin-bottom:10px">
          <div class="rank">${i+1}</div>
-         <div style="flex:1 1 auto" class="userCell">
-           <img class="avatar" referrerpolicy="no-referrer" loading="lazy"
-                src="https://unavatar.io/instagram/${encodeURIComponent(u)}"
-                onerror="this.style.display='none'">
-           <a href="https://www.instagram.com/${u}" target="_blank" rel="noreferrer">@${u}</a>
-         </div>
-         ${icon}
+         <img class="ava" src="${avatarURL(u)}" referrerpolicy="no-referrer" alt="">
+         <a class="userLink" href="https://www.instagram.com/${u}" target="_blank" rel="noreferrer">@${u}</a>
+         <div style="margin-left:auto">${icon}</div>
        </div>`);
   }
 }
@@ -201,18 +199,19 @@ function renderTable(list, page=1, size=100, topLen=1000){
   tb.innerHTML="";
   const start=(page-1)*size, end=Math.min(list.length,start+size);
   for(let i=start;i<end;i++){
-    const u=list[i]; const rank=i+1;
+    const u=list[i];
+    const rank=i+1;
     const tag = rank<=topLen ? `<span class="tag">Öncelik</span>` : "";
     tb.insertAdjacentHTML("beforeend",
       `<tr>
         <td>${rank}</td>
         <td>
-          <div class="userCell">
-            <img class="avatar" referrerpolicy="no-referrer" loading="lazy"
-                 src="https://unavatar.io/instagram/${encodeURIComponent(u)}"
-                 onerror="this.style.display='none'">
-            <a href="https://www.instagram.com/${u}" target="_blank" rel="noreferrer">@${u}</a>
-          </div>
+          <a class="userLink" href="https://www.instagram.com/${u}" target="_blank" rel="noreferrer">
+            <span class="userCell">
+              <img class="ava" src="${avatarURL(u)}" referrerpolicy="no-referrer" alt="">
+              @${u}
+            </span>
+          </a>
         </td>
         <td>${tag}</td>
       </tr>`);
@@ -236,7 +235,7 @@ function showYou(username, LB){
   const youCard = document.getElementById("youCard");
   const title   = document.getElementById("youTitle");
   const neigh   = document.getElementById("youNeighbors");
-  const u = (username||"").trim().replace(/^@/,"");
+  const u = norm(username);
   if(!u){ youCard.style.display="none"; return; }
   const i = LB.idx.get(u.toLowerCase());
   if(i==null){
@@ -257,7 +256,7 @@ function showYou(username, LB){
 (async function(){
   try{
     await loadData();
-    STATE.LB = buildDaily(STATE.base, STATE.top, todayStr);
+    STATE.LB = buildDaily(STATE.all, STATE.top, todayStr);
     renderTop5(STATE.LB.list);
     fillPages(STATE.LB.list.length, STATE.pageSize);
     renderTable(STATE.LB.list, 1, STATE.pageSize, STATE.LB.topLen);
@@ -277,7 +276,7 @@ document.getElementById("btnFind").onclick = ()=>{
 };
 document.getElementById("day").addEventListener("change",(e)=>{
   const d = e.target.value || todayStr;
-  STATE.LB = buildDaily(STATE.base, STATE.top, d);
+  STATE.LB = buildDaily(STATE.all, STATE.top, d);
   renderTop5(STATE.LB.list);
   fillPages(STATE.LB.list.length, STATE.pageSize);
   document.getElementById("page").value = "1";
