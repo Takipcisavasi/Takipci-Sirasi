@@ -1,213 +1,257 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Bugünkü Sıran</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>takipcileridovusturuyorum — Sıralamalar</title>
+<meta name="color-scheme" content="dark">
 <style>
-:root{
-  --bg:#0b0b12;--p1:#12121c;--p2:#17172a;--bd:#26263a;
-  --tx:#eaeaf2;--mut:#a6a8b3;--brand:#7c5cff;--chip:#1b1b2d;
-  --ok:#36c690;--row:#0f0f19
-}
-*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-header{position:sticky;top:0;z-index:10;background:linear-gradient(to bottom,rgba(11,11,18,.95),rgba(11,11,18,.8));backdrop-filter:blur(6px);border-bottom:1px solid var(--bd)}
-.wrap{max-width:1100px;margin:0 auto;padding:14px 16px}
-.hrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-h1{margin:0;font-size:20px;font-weight:700}
-.badge{background:var(--chip);border:1px solid var(--bd);color:var(--mut);border-radius:999px;padding:6px 10px;font-size:12px}
-.flex1{flex:1}
-.input{background:var(--p1);border:1px solid var(--bd);color:var(--tx);padding:10px 12px;border-radius:10px;min-width:220px;outline:none}
-.btn{background:var(--brand);border:1px solid #6e53ff;color:#fff;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:600}
-.btn.ghost{background:transparent;color:var(--tx);border-color:var(--bd)}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-main{max-width:1100px;margin:16px auto;padding:0 16px;display:grid;grid-template-columns:1fr;gap:16px}
-.card{background:var(--p2);border:1px solid var(--bd);border-radius:14px;overflow:hidden}
-.chead{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--bd)}
-.ctitle{font-weight:700} .mut{color:var(--mut)} .ctrls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-select{background:var(--p1);border:1px solid var(--bd);color:var(--tx);padding:8px 10px;border-radius:10px}
-table{width:100%;border-collapse:separate;border-spacing:0}
-thead th{font-size:12px;color:var(--mut);text-align:left;padding:10px 14px;border-bottom:1px solid var(--bd)}
-tbody td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.04)}
-tbody tr:nth-child(2n){background:var(--row)} tbody tr:hover{background:#141428}
-.rank{font-variant-numeric:tabular-nums;width:88px} .user{font-weight:600} .note{color:var(--mut)}
-.pill{display:inline-flex;align-items:center;gap:6px;background:#13132b;border:1px solid #2a2a52;color:#c8c9ff;border-radius:999px;padding:4px 8px;font-size:12px}
-.trophy{font-size:16px}.gold{color:#ffcc3e}.silver{color:#c0c7d1}.bronze{color:#d89b6f}
-.me{box-shadow:inset 0 0 0 2px var(--ok)} .me .user{color:#baf7dc}
-.foot{padding:14px 16px;text-align:center;color:var(--mut);font-size:12px;border-top:1px solid var(--bd)}
-@media (max-width:640px){.rank{width:64px}.input{min-width:160px}}
+  :root{
+    --bg:#0b0b12;--panel:#12121e;--card:#181828;--muted:#a8a8bb;
+    --line:#24243a;--text:#eaeaf7;--accent:#6b8cff;--chip:#1e1e32;
+    --gold:#f5c451;--silver:#cfd8dc;--bronze:#d7a47b;--green:#5dd39e;
+  }
+  *{box-sizing:border-box} html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1180px;margin:0 auto;padding:22px}
+  header{display:flex;align-items:center;gap:14px;padding:10px 0 18px;border-bottom:1px solid var(--line)}
+  header .logo{display:flex;align-items:center;gap:8px;font-weight:700}
+  header .logo svg{width:20px;height:20px}
+  header .right{margin-left:auto;display:flex;gap:10px}
+  .chip{background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:6px 10px;color:var(--muted);font-size:12px}
+  .btn{background:var(--accent);border:none;border-radius:9px;color:#fff;padding:10px 14px;font-weight:600;cursor:pointer}
+  .btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
+  .muted{color:var(--muted)}
+  h1{font-size:28px;margin:16px 0 6px}
+  .lead{color:var(--muted);margin:0 0 18px}
+  /* grid */
+  .grid{display:grid;grid-template-columns:1.25fr .9fr;gap:18px}
+  @media(max-width:980px){ .grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .card h3{margin:0 0 12px;font-size:15px;letter-spacing:.2px}
+  /* recent videos */
+  .videos .item{display:flex;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);align-items:center}
+  .videos .item+.item{margin-top:10px}
+  .thumb{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#333,#222)}
+  .videos .title{font-weight:600}
+  .videos .sub{font-size:12px;color:var(--muted)}
+  .pill{font-size:12px;background:var(--chip);border:1px solid var(--line);padding:4px 8px;border-radius:999px}
+  /* top5 */
+  .top5 .row{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:10px 12px}
+  .top5 .row+.row{margin-top:8px}
+  .rank{width:26px;height:26px;border-radius:999px;display:grid;place-items:center;background:#1a1a2b;border:1px solid var(--line);font-weight:700}
+  .name{font-weight:600}
+  .cup{width:18px;height:18px}
+  .gold{color:var(--gold)} .silver{color:var(--silver)} .bronze{color:var(--bronze)}
+  .go-list{margin-top:12px}
+  /* list section */
+  section#list{margin-top:26px}
+  .bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+  .search{display:flex;gap:8px;align-items:center}
+  input[type=text],select{background:#10101a;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px 12px;outline:none}
+  table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}
+  th{color:var(--muted);font-weight:600;background:#141422}
+  tr:hover{background:#141426}
+  .tag{font-size:12px;color:var(--green)}
+  .foot{margin-top:8px;color:var(--muted);font-size:12px}
+  .you{background:linear-gradient(90deg,rgba(107,140,255,.12),transparent)}
 </style>
 </head>
 <body>
-<header>
-  <div class="wrap">
-    <div class="hrow">
-      <h1>Bugünkü Sıran</h1>
-      <span class="badge" id="today">—</span>
-      <span class="badge">Toplam <b id="total">0</b> kişi</span>
-      <span class="badge">Öncelikli: <b id="activeCount">0</b></span>
-      <div class="flex1"></div>
-      <input id="search" class="input" placeholder="@kullanıcı bul"/>
-      <button id="btnFind" class="btn">Sırayı Göster</button>
-      <button id="btnShare" class="btn ghost">Paylaş</button>
-      <button id="btnLast" class="btn ghost">Benim Sıram</button>
+<div class="wrap">
+
+  <header>
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path d="M5 22h14M12 2l3 7h7l-5.5 4 2 7-6.5-4.5L5 20l2-7L2 9h7l3-7z" stroke-width="1.2"/>
+      </svg>
+      takipcileridovusturuyorum
+    </div>
+    <div class="right">
+      <span class="chip" id="chip-date">—</span>
+      <span class="chip">Toplam <b id="chip-total">0</b> kişi</span>
+      <span class="chip">Öncelik: <b>1000</b></span>
+      <a class="btn ghost" href="https://instagram.com" target="_blank" rel="noreferrer">Instagram</a>
+    </div>
+  </header>
+
+  <h1>Videolar ve Sıralamalar</h1>
+  <p class="lead">En güncel videolar ve takipçi sıralamaları burada.</p>
+
+  <div class="grid">
+    <!-- left: recent videos -->
+    <div class="card videos">
+      <h3>Son Videolar</h3>
+
+      <a class="item" href="#list" data-date="today">
+        <div class="thumb"></div>
+        <div style="flex:1">
+          <div class="title" id="v1-title">Bugünkü video</div>
+          <div class="sub">Sıralamaları görmek için tıklayın</div>
+        </div>
+        <span class="pill">Son</span>
+      </a>
+
+      <a class="item" href="#list" data-date="yesterday">
+        <div class="thumb"></div>
+        <div style="flex:1">
+          <div class="title" id="v2-title">Dünkü video</div>
+          <div class="sub">Sıralamaları görmek için tıklayın</div>
+        </div>
+      </a>
+    </div>
+
+    <!-- right: top 5 -->
+    <div class="card top5">
+      <h3>Son videodaki ilk 5 Sıralama</h3>
+      <div id="top5"></div>
+      <div class="go-list">
+        <a class="btn" href="#list">Kendi sıralamam ve tüm sıralamayı gör</a>
+      </div>
     </div>
   </div>
-</header>
 
-<main>
-  <section class="card">
-    <div class="chead">
-      <div>
-        <div class="ctitle">Top 100</div>
-        <div class="mut" style="font-size:12px">İlk 1000 CSV’den; kalanlar günün seed’iyle düzenlenir.</div>
+  <!-- full list -->
+  <section id="list">
+    <div class="bar">
+      <div class="search" style="flex:1;min-width:260px">
+        <input id="q" type="text" placeholder="@kullanıcı bul" style="flex:1">
+        <button id="btnFind" class="btn">Sırayı Göster</button>
+        <button id="btnMine" class="btn ghost">Benim Sıram</button>
       </div>
-      <div class="ctrls">
-        <label class="mut" for="page">Sayfa</label>
-        <select id="page"></select>
+      <div style="margin-left:auto" class="search">
+        <label class="muted">Sayfa</label>
+        <select id="page">
+          <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+        </select>
         <button id="btnPage" class="btn ghost">Görüntüle</button>
       </div>
     </div>
-    <table>
-      <thead><tr><th class="rank">#</th><th>Kullanıcı</th><th class="note">Not</th></tr></thead>
-      <tbody id="tbody"></tbody>
+
+    <table id="tbl">
+      <thead><tr><th style="width:72px">#</th><th>Kullanıcı</th><th>Not</th></tr></thead>
+      <tbody></tbody>
     </table>
-    <div class="foot">© 2025 • <a class="mut" href="/data/top1000.csv">top1000.csv</a></div>
+    <div class="foot">© 2025 • <a class="muted" href="data/top1000.csv">top1000.csv</a></div>
   </section>
 
-  <section id="youBox" class="card" style="display:none">
-    <div class="chead">
-      <div class="ctitle" id="youTitle">—</div>
-      <div class="mut" id="youMeta">—</div>
-    </div>
-    <div style="padding:14px 16px">
-      <div class="mut" id="youNeighbors">—</div>
-    </div>
-  </section>
-</main>
+</div>
 
 <script>
 /* ---------- küçük yardımcılar ---------- */
-const today = new Date();
-const dayStr = today.toISOString().slice(0,10);
-document.getElementById('today').textContent = dayStr;
-const q = (s)=>document.querySelector(s);
-
-/* deterministik PRNG */
-function xmur3(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19}return ()=>{h=Math.imul(h^(h>>>16),2246822507);h=Math.imul(h^(h>>>13),3266489909);return (h^(h>>>16))>>>0}}
-function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+function xmur3(str){let h=1779033703^str.length;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),3432918353);h=h<<13|h>>>19}return function(){h=Math.imul(h^(h>>>16),2246822507);h=Math.imul(h^(h>>>13),3266489909);return (h^(h>>>16))>>>0}}
+function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296}}
 function shuffleSeed(arr,seedStr){const seed=xmur3(seedStr)();const rand=mulberry32(seed);const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+const today   = new Date();
+const yyyymmdd= d=>d.toISOString().slice(0,10);
+const todayStr= yyyymmdd(today);
+const yestStr = yyyymmdd(new Date(Date.now()-864e5));
+document.getElementById("chip-date").textContent = todayStr;
+document.getElementById("v1-title").textContent = todayStr+" tarihinde paylaşılan video";
+document.getElementById("v2-title").textContent = yestStr+" tarihinde paylaşılan video";
 
-/* ---------- veri yükleme ---------- */
-async function loadAll(){
-  const v=dayStr;
-  const [csvAll,csvTop,bans] = await Promise.all([
-    fetch(`/data/followers.csv?v=${v}`).then(r=>r.ok?r.text():""),
-    fetch(`/data/top1000.csv?v=${v}`).then(r=>r.ok?r.text():""),
-    fetch(`/data/bans.json?v=${v}`).then(r=>r.ok?r.json():[])
+/* ---------- verileri çek ---------- */
+const cacheBust = todayStr;
+async function loadData(){
+  const [csvAll, csvTop, bans] = await Promise.all([
+    fetch("data/followers.csv?v="+cacheBust).then(r=>r.text()),
+    fetch("data/top1000.csv?v="+cacheBust).then(r=>r.text()),
+    fetch("data/bans.json?v="+cacheBust).then(r=>r.json()).catch(()=>[])
   ]);
-  const followers = csvAll.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-  const banSet = new Set((bans||[]).map(s=>s.toLowerCase()));
-  const base = followers.filter(u=>u && !banSet.has(u.toLowerCase())); // herkes burada
-  const rawTop = csvTop.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-  const topSet = new Set(rawTop.map(s=>s.toLowerCase()));
-  q('#total').textContent = base.length;
-  q('#activeCount').textContent = rawTop.length;
-  return {base, rawTop, topSet};
+  const all   = csvAll.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  const top   = csvTop.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  const banL  = new Set((bans||[]).map(s=>s.toLowerCase()));
+  const base  = all.filter(u=>u && !banL.has(u.toLowerCase())); // ban hariç
+  document.getElementById("chip-total").textContent = base.length;
+  return { base, top };
 }
 
-/* ---------- sıralama oluştur ---------- */
-function makeLeaderboard(base, rawTop, topSet){
+/* ---------- günlük sıralama üret ---------- */
+function buildDaily(base, topRaw, dateStr){
   const baseL = new Set(base.map(u=>u.toLowerCase()));
-  const top = rawTop.filter(u=>baseL.has(u.toLowerCase())); // csv’de olup takipçi havuzunda olanlar
-  const topL = new Set(top.map(u=>u.toLowerCase()));
-  const others = base.filter(u=>!topL.has(u.toLowerCase()));
-  const arranged = top.concat(shuffleSeed(others, 'DAY-'+dayStr)); // deterministik
-  const idx = new Map(); arranged.forEach((u,i)=>idx.set(u.toLowerCase(),i));
-  return {list:arranged, idx, topCount:top.length};
+  const top   = topRaw.filter(u=>baseL.has(u.toLowerCase())); // CSV’de olup listede olanlar
+  const topL  = new Set(top.map(u=>u.toLowerCase()));
+  const tail  = base.filter(u=>!topL.has(u.toLowerCase()));
+  const mixed = top.concat( shuffleSeed(tail,"DAY-"+dateStr) );
+  const idx   = new Map(); mixed.forEach((u,i)=>idx.set(u.toLowerCase(),i));
+  return { list:mixed, idx, topLen:top.length };
 }
 
-/* ---------- render ---------- */
-const PAGE=100;
-function fillPages(total){
-  const sel=q('#page'); sel.innerHTML="";
-  const pages=Math.max(1,Math.ceil(total/PAGE));
-  for(let i=1;i<=pages;i++){const o=document.createElement('option');o.value=i;o.textContent=i;sel.appendChild(o)}
-}
-function trophy(rank){
-  if(rank===1) return '<span class="trophy gold">🥇</span>';
-  if(rank===2) return '<span class="trophy silver">🥈</span>';
-  if(rank===3) return '<span class="trophy bronze">🥉</span>';
-  return '';
-}
-function render(list,page,highlightUser,topCount){
-  const start=(page-1)*PAGE, end=Math.min(list.length,start+PAGE);
-  const tb=q('#tbody'); tb.innerHTML="";
-  for(let i=start;i<end;i++){
-    const u=list[i]; const rank=i+1; const tr=document.createElement('tr');
-    if(highlightUser && u.toLowerCase()===highlightUser.toLowerCase()) tr.classList.add('me');
-    tr.innerHTML=`
-      <td class="rank">${trophy(rank)} ${rank}</td>
-      <td class="user">@${u}</td>
-      <td class="note">${rank<=topCount?'<span class="pill">Öncelikli</span>':''}</td>`;
-    tb.appendChild(tr);
+/* ---------- arayüz ---------- */
+function renderTop5(list){
+  const el = document.getElementById("top5");
+  el.innerHTML = "";
+  const cup = (cls)=>`<svg class="cup ${cls}" viewBox="0 0 24 24" fill="currentColor"><path d="M8 3h8v3h4v3c0 2.8-2 5-6 5H10c-4 0-6-2.2-6-5V6h4V3zm8 10v2H8v-2c1.3.7 2.6 1 4 1s2.7-.3 4-1zm-8 4h8v2c0 1.7-1.3 3-3 3H9c-1.7 0-3-1.3-3-3v-2z"/></svg>`;
+  for(let i=0;i<5 && i<list.length;i++){
+    const u = list[i];
+    const icon = i===0?cup("gold"): i===1?cup("silver"): i===2?cup("bronze"):"";
+    el.insertAdjacentHTML("beforeend",
+      `<div class="row">
+        <div class="rank">${i+1}</div>
+        <div class="name">@${u}</div>
+        <div style="margin-left:auto">${icon}</div>
+      </div>`);
   }
 }
 
-/* ---------- arama ---------- */
-function showUser(u,LB){
-  const you=u.trim().replace(/^@/,'');
-  if(!you){q('#youBox').style.display='none';return}
-  const i=LB.idx.get(you.toLowerCase());
-  if(i==null){ // (nadiren base’de olmayabilir)
-    alert('@'+you+' bulunamadı.');
+function renderTable(list, page=1, size=100, topLen=1000){
+  const start=(page-1)*size, end=Math.min(list.length,start+size);
+  const tb = document.querySelector("#tbl tbody");
+  tb.innerHTML="";
+  for(let i=start; i<end; i++){
+    const u=list[i], rank=i+1, tag = rank<=topLen?`<span class="tag">Öncelik</span>`:"";
+    tb.insertAdjacentHTML("beforeend",
+      `<tr><td>${rank}</td><td>@${u}</td><td>${tag}</td></tr>`);
+  }
+}
+
+function showMe(user, LB){
+  const q = (user||"").trim().replace(/^@/,"");
+  if(!q){return}
+  const i = LB.idx.get(q.toLowerCase());
+  const tb = document.querySelector("#tbl tbody");
+  if(i==null){
+    alert("@"+q+" bugün listede bulunamadı.");
     return;
   }
-  const rank=i+1, total=LB.list.length;
-  const pct=((rank/total)*100).toFixed(2);
-  const from=Math.max(0,i-3), to=Math.min(total,i+4);
-  const neigh=LB.list.slice(from,to).map((x,j)=>`${from+j+1}. @${x}`).join(' • ');
-  q('#youBox').style.display='block';
-  q('#youTitle').textContent='@'+you+'  →  #'+rank;
-  q('#youMeta').textContent=`Toplam ${total} kişi • ilk %${pct}`;
-  q('#youNeighbors').textContent=neigh;
-  // sayfaya git & highlight
-  const page=Math.floor(i/PAGE)+1;
-  q('#page').value=String(page);
-  render(LB.list,page,you,LB.topCount);
-  // son aranan
-  try{localStorage.setItem('last_user','@'+you)}catch{}
+  const page = Math.floor(i/100)+1;
+  document.getElementById("page").value = String(page);
+  renderTable(LB.list, page, 100, LB.topLen);
+  // highlight + komşular
+  const start=(page-1)*100, row = i-start;
+  const trs = tb.querySelectorAll("tr");
+  if(trs[row]) trs[row].classList.add("you");
+  // alt bilgi
+  const from=Math.max(0,i-3), to=Math.min(LB.list.length,i+4);
+  const neigh = LB.list.slice(from,to).map((x,j)=>`${from+j+1}. @${x}`).join(" • ");
+  console.info(`@${q} → #${i+1}`, neigh);
 }
 
-/* ---------- init ---------- */
-let DATA=null, LB=null;
+/* ---------- başlat ---------- */
+let STATE=null;
 (async function(){
-  try{
-    DATA=await loadAll();
-    LB=makeLeaderboard(DATA.base,DATA.rawTop,DATA.topSet);
-    fillPages(LB.list.length);
-    render(LB.list,1,null,LB.topCount);
-
-    // URL’den @u oku
-    const params=new URLSearchParams(location.search);
-    const u=params.get('u');
-    if(u){ q('#search').value=u; showUser(u,LB); }
-
-  }catch(e){
-    console.error(e);
-    alert('Veri yüklenemedi.');
-  }
+  const {base, top} = await loadData();
+  const LB = buildDaily(base, top, todayStr);
+  STATE = {base,top,LB};
+  renderTop5(LB.list);
+  renderTable(LB.list,1,100,LB.topLen);
 })();
 
-/* ---------- UI bağlama ---------- */
-q('#btnPage').onclick=()=>{const p=parseInt(q('#page').value||'1',10); render(LB.list,p,q('#search').value.trim().replace(/^@/,''),LB.topCount)};
-q('#btnFind').onclick=()=>{const v=q('#search').value; if(v){ showUser(v,LB); }};
-q('#btnShare').onclick=async()=>{
-  const u=q('#search').value.trim(); if(!u) return;
-  const url=new URL(location.href); url.searchParams.set('u',u.startsWith('@')?u:'@'+u);
-  try{await navigator.clipboard.writeText(url.toString()); alert('Bağlantı kopyalandı.');}catch{prompt('Bağlantıyı kopyala:',url.toString())}
+/* ---------- etkileşimler ---------- */
+document.getElementById("btnPage").onclick = () => {
+  const p = parseInt(document.getElementById("page").value,10)||1;
+  renderTable(STATE.LB.list, p, 100, STATE.LB.topLen);
 };
-q('#btnLast').onclick=()=>{try{const u=localStorage.getItem('last_user'); if(u){q('#search').value=u; showUser(u,LB);} }catch{}};
+document.getElementById("btnFind").onclick = () => {
+  const v = document.getElementById("q").value;
+  showMe(v, STATE.LB);
+};
+document.getElementById("btnMine").onclick = () => {
+  const v = document.getElementById("q").value || prompt("Kullanıcı adın? (@ hariç)");
+  if(v) { document.getElementById("q").value = v; showMe(v, STATE.LB); }
+};
 </script>
 </body>
 </html>
