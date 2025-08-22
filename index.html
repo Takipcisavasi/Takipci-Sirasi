@@ -1,48 +1,119 @@
+<!DOCTYPE html><html lang="tr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bugünkü Sıran</title>
+<style>
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0b0b12;color:#eee;margin:0}
+header{padding:16px 20px;border-bottom:1px solid #222;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+h1{font-size:20px;margin:0}
+main{max-width:1000px;margin:0 auto;padding:20px}
+.card{background:#141422;border:1px solid #26263a;border-radius:12px;padding:16px;margin-bottom:16px}
+input,button,select{background:#10101a;border:1px solid #333;color:#eee;padding:10px;border-radius:8px}
+button{cursor:pointer}
+table{width:100%;border-collapse:collapse}
+th,td{padding:8px 10px;border-bottom:1px solid #222;font-size:14px}
+th{color:#bbb;text-align:left}
+.muted{color:#aaa}
+.badge{background:#1e1e2e;border:1px solid #32324a;border-radius:999px;padding:4px 10px;font-size:12px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.right{margin-left:auto}
+</style>
+</head><body>
+<header>
+  <h1>Bugünkü Sıran</h1>
+  <span class="badge" id="today"></span>
+  <span class="badge">Toplam <span id="total">0</span> kişi</span>
+  <span class="badge">Öncelikli: <span id="activeCount">0</span></span>
+  <div class="right row">
+    <input id="search" placeholder="@kullanıcı bul">
+    <button id="btnFind">Sırayı Göster</button>
+  </div>
+</header>
+<main>
+  <div class="card">
+    <div class="row">
+      <strong>Top 100</strong>
+      <div class="right row">
+        <label class="muted">Sayfa:</label>
+        <select id="page"><option>1</option><option>2</option></select>
+        <button id="btnPage">Görüntüle</button>
+      </div>
+    </div>
+    <div class="muted" style="margin:8px 0 12px">İlk 1000 CSV’den; kalanlar güne göre karışık.</div>
+    <table id="tbl"><thead><tr><th>#</th><th>Kullanıcı</th><th class="muted">Not</th></tr></thead><tbody></tbody></table>
+  </div>
+  <div class="card" id="youCard" style="display:none">
+    <strong id="youTitle"></strong>
+    <div id="youNeighbors" class="muted" style="margin-top:8px"></div>
+  </div>
+</main>
+
 <script>
 function xmur3(s){let h=1779033703^s.length;for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353);h=h<<13|h>>>19}return function(){h=Math.imul(h^(h>>>16),2246822507);h=Math.imul(h^(h>>>13),3266489909);return (h^(h>>>16))>>>0}}
-function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296}}
-function shuffleSeed(arr,seedStr){const seed=xmur3(seedStr)();const rand=mulberry32(seed);const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+function shuffleSeed(arr,seed){const r=mulberry32(xmur3(seed)()),a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 
-const todayStr=new Date().toISOString().slice(0,10);
-document.getElementById("today").textContent=todayStr;
-const v=todayStr; // cache-buster
+const today=new Date().toISOString().slice(0,10);
+document.getElementById("today").textContent=today;
+const v=today; // cache-buster
 
 async function loadData(){
-  try{
-    const [csvAll,csvTop,bans] = await Promise.all([
-      fetch(`/data/followers.csv?v=${v}`).then(r=>{if(!r.ok)throw new Error('followers.csv '+r.status);return r.text()}),
-      fetch(`/data/top1000.csv?v=${v}`).then(r=>r.ok?r.text():""),
-      fetch(`/data/bans.json?v=${v}`).then(r=>r.ok?r.json():[])
-    ]);
-    const followers = (csvAll||"").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-    const banSet = new Set((bans||[]).map(s=>s.toLowerCase()));
-    const base = followers.filter(u=>u && !banSet.has(u.toLowerCase()));
+  const [csvAll,csvTop,bans]=await Promise.all([
+    fetch(`/data/followers.csv?v=${v}`).then(r=>{if(!r.ok)throw new Error('followers.csv '+r.status);return r.text()}),
+    fetch(`/data/top1000.csv?v=${v}`).then(r=>r.ok?r.text():""),
+    fetch(`/data/bans.json?v=${v}`).then(r=>r.ok?r.json():[])
+  ]);
+  const followers=(csvAll||"").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  const banSet=new Set((bans||[]).map(s=>s.toLowerCase()));
+  const base=followers.filter(u=>u&&!banSet.has(u.toLowerCase()));
+  const rawTop=(csvTop||"").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  document.getElementById("total").textContent=base.length;
+  document.getElementById("activeCount").textContent=rawTop.length;
+  return {base,rawTop};
+}
 
-    const rawTop = (csvTop||"").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-    const topSet = new Set(rawTop.map(s=>s.toLowerCase()));
+function buildLB(base,rawTop,date){
+  const baseLower=new Set(base.map(u=>u.toLowerCase()));
+  const top=rawTop.filter(u=>baseLower.has(u.toLowerCase()));     // listedeki sırayı koru
+  const topLower=new Set(top.map(u=>u.toLowerCase()));
+  const others=base.filter(u=>!topLower.has(u.toLowerCase()));
+  const list=top.concat(shuffleSeed(others,"DAY-"+date));
+  const idx=new Map(); list.forEach((u,i)=>idx.set(u.toLowerCase(),i));
+  return {list,idx};
+}
 
-    console.log("Loaded:", {followers:followers.length, base:base.length, top1000:rawTop.length, bans:(bans||[]).length});
-    document.getElementById("total").textContent = base.length;
-    document.getElementById("activeCount").textContent = rawTop.length;
-
-    return { base, rawTop, topSet };
-  }catch(err){
-    console.error("DATA LOAD ERROR:", err);
-    alert("Veri yüklenemedi: "+err.message);
-    return { base:[], rawTop:[], topSet:new Set() };
+function render(list,p=1,ps=100){
+  const s=(p-1)*ps,it=list.slice(s,s+ps),tb=document.querySelector("#tbl tbody");
+  tb.innerHTML="";
+  if(!it.length){tb.innerHTML='<tr><td colspan="3" class="muted">Liste boş.</td></tr>';return;}
+  for(let i=0;i<it.length;i++){
+    const rank=s+i+1,tr=document.createElement("tr");
+    tr.innerHTML=`<td>${rank}</td><td>@${it[i]}</td><td class="muted">${rank<=1000?"Öncelikli":""}</td>`;
+    tb.appendChild(tr);
   }
 }
 
-function buildDailyLeaderboard(base, rawTop, topSet, dateStr){
-  // top1000'de olup base'de de olanlar, verilen sırayı KORU
-  const baseLower = new Set(base.map(u=>u.toLowerCase()));
-  const top = rawTop.filter(u=>baseLower.has(u.toLowerCase()));
-  // Diğerleri
-  const topLower = new Set(top.map(u=>u.toLowerCase()));
-  const others = base.filter(u=>!topLower.has(u.toLowerCase()));
-  // Günlük karıştır
-  const shuffledOthers = shuffleSeed(others, "DAY-"+dateStr);
-  const list = top.concat(shuffledOthers);
-  const idx = new Map(); list.forEach((u,i)=>idx.set(u.toLowerCase(), i));
-  console.log("LB:", {total:list.length, top:top.length, others:shuffledOthers.length, sample:list.slice(0,5)});
-  return {
+function showYou(username,lb){
+  const u=(username||"").trim().replace(/^@/,"").toLowerCase(),
+        card=document.getElementById("youCard"),
+        t=document.getElementById("youTitle"),
+        n=document.getElementById("youNeighbors");
+  if(!u){card.style.display="none";return;}
+  const i=lb.idx.get(u);
+  if(i==null){card.style.display="block";t.textContent=`@${u} bugün listede yok.`;n.textContent="";return;}
+  const rank=i+1,total=lb.list.length,pct=((rank/total)*100).toFixed(2),
+        from=Math.max(0,i-3),to=Math.min(total,i+4),
+        neighbors=lb.list.slice(from,to).map((x,j)=>`${from+j+1}. @${x}`).join(" • ");
+  card.style.display="block";t.textContent=`@${u} → #${rank} (top %${pct})`;n.textContent=neighbors;
+}
+
+let LB=null;(async()=>{
+  try{
+    const d=await loadData();
+    LB=buildLB(d.base,d.rawTop,today);
+    render(LB.list,1,100);
+  }catch(e){console.error(e);alert("Veri yüklenemedi.");}
+})();
+document.getElementById("btnPage").onclick=()=>{const p=parseInt(document.getElementById("page").value,10)||1;render(LB.list,p,100)};
+document.getElementById("btnFind").onclick=()=>{showYou(document.getElementById("search").value,LB)};
+</script>
+</body></html>
