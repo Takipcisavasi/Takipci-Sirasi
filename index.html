@@ -1,119 +1,100 @@
-<!DOCTYPE html><html lang="tr"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Bugünkü Sıran</title>
-<style>
-body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0b0b12;color:#eee;margin:0}
-header{padding:16px 20px;border-bottom:1px solid #222;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-h1{font-size:20px;margin:0}
-main{max-width:1000px;margin:0 auto;padding:20px}
-.card{background:#141422;border:1px solid #26263a;border-radius:12px;padding:16px;margin-bottom:16px}
-input,button,select{background:#10101a;border:1px solid #333;color:#eee;padding:10px;border-radius:8px}
-button{cursor:pointer}
-table{width:100%;border-collapse:collapse}
-th,td{padding:8px 10px;border-bottom:1px solid #222;font-size:14px}
-th{color:#bbb;text-align:left}
-.muted{color:#aaa}
-.badge{background:#1e1e2e;border:1px solid #32324a;border-radius:999px;padding:4px 10px;font-size:12px}
-.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.right{margin-left:auto}
-</style>
-</head><body>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Bugünkü Sıran</title>
+  <style>
+    :root{
+      --bg:#0b0b12; --panel:#12121c; --panel2:#17172a; --border:#26263a;
+      --text:#eaeaf2; --muted:#a6a8b3; --brand:#7c5cff; --chip:#1b1b2d;
+      --ok:#36c690; --warn:#f6c34a; --danger:#e35d6a; --row:#0f0f19;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    a{color:inherit}
+    header{position:sticky;top:0;z-index:10;background:linear-gradient(to bottom,rgba(11,11,18,.95),rgba(11,11,18,.8));backdrop-filter:blur(6px);border-bottom:1px solid var(--border)}
+    .wrap{max-width:1100px;margin:0 auto;padding:14px 16px}
+    .titleRow{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    h1{margin:0;font-size:20px;font-weight:700;letter-spacing:.2px}
+    .badge{background:var(--chip);border:1px solid var(--border);color:var(--muted);border-radius:999px;padding:6px 10px;font-size:12px}
+    .spacer{flex:1}
+    .input{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:10px;min-width:220px;outline:none}
+    .btn{background:var(--brand);border:1px solid #6e53ff;color:#fff;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:600}
+    .btn.ghost{background:transparent;color:var(--text);border-color:var(--border)}
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+
+    main{max-width:1100px;margin:16px auto;padding:0 16px;display:grid;grid-template-columns:1fr;gap:16px}
+    .card{background:var(--panel2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+    .cardHead{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border)}
+    .cardTitle{font-weight:700}
+    .muted{color:var(--muted)}
+    .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    select{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:10px}
+
+    table{width:100%;border-collapse:separate;border-spacing:0}
+    thead th{font-size:12px;color:var(--muted);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border)}
+    tbody td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.04)}
+    tbody tr:nth-child(2n){background:var(--row)}
+    tbody tr:hover{background:#141428}
+    .rank{font-variant-numeric:tabular-nums;width:88px}
+    .user{font-weight:600}
+    .note{color:var(--muted)}
+    .pill{display:inline-flex;align-items:center;gap:6px;background:#13132b;border:1px solid #2a2a52;color:#c8c9ff;border-radius:999px;padding:4px 8px;font-size:12px}
+    .trophy{font-size:16px}
+    .gold{color:#ffcc3e}.silver{color:#c0c7d1}.bronze{color:#d89b6f}
+    .me{box-shadow:inset 0 0 0 2px var(--ok)}
+    .me .user{color:#baf7dc}
+
+    .foot{padding:14px 16px;text-align:center;color:var(--muted);font-size:12px;border-top:1px solid var(--border)}
+    .srOnly{position:absolute;left:-9999px}
+    @media (max-width:640px){
+      .rank{width:64px}
+      .titleRow{gap:8px}
+      .input{min-width:160px}
+    }
+  </style>
+</head>
+<body>
 <header>
-  <h1>Bugünkü Sıran</h1>
-  <span class="badge" id="today"></span>
-  <span class="badge">Toplam <span id="total">0</span> kişi</span>
-  <span class="badge">Öncelikli: <span id="activeCount">0</span></span>
-  <div class="right row">
-    <input id="search" placeholder="@kullanıcı bul">
-    <button id="btnFind">Sırayı Göster</button>
+  <div class="wrap">
+    <div class="titleRow">
+      <h1>Bugünkü Sıran</h1>
+      <span class="badge" id="today">—</span>
+      <span class="badge">Toplam <b id="total">0</b> kişi</span>
+      <span class="badge">Öncelikli: <b id="activeCount">0</b></span>
+      <div class="spacer"></div>
+      <input id="search" class="input" placeholder="@kullanıcı bul">
+      <button id="btnFind" class="btn">Sırayı Göster</button>
+      <button id="btnShare" class="btn ghost">Paylaş</button>
+      <button id="btnLast" class="btn ghost">Benim Sıram</button>
+    </div>
   </div>
 </header>
+
 <main>
-  <div class="card">
-    <div class="row">
-      <strong>Top 100</strong>
-      <div class="right row">
-        <label class="muted">Sayfa:</label>
-        <select id="page"><option>1</option><option>2</option></select>
-        <button id="btnPage">Görüntüle</button>
+  <section class="card">
+    <div class="cardHead">
+      <div>
+        <div class="cardTitle">Top 100</div>
+        <div class="muted" style="font-size:12px">İlk 1000 CSV’den; kalanlar günün seed’iyle deterministik karışır.</div>
+      </div>
+      <div class="controls">
+        <label class="muted" for="page">Sayfa</label>
+        <select id="page"></select>
+        <button id="btnPage" class="btn ghost">Görüntüle</button>
       </div>
     </div>
-    <div class="muted" style="margin:8px 0 12px">İlk 1000 CSV’den; kalanlar güne göre karışık.</div>
-    <table id="tbl"><thead><tr><th>#</th><th>Kullanıcı</th><th class="muted">Not</th></tr></thead><tbody></tbody></table>
-  </div>
-  <div class="card" id="youCard" style="display:none">
-    <strong id="youTitle"></strong>
-    <div id="youNeighbors" class="muted" style="margin-top:8px"></div>
-  </div>
-</main>
+    <table>
+      <thead><tr><th class="rank">#</th><th>Kullanıcı</th><th class="note">Not</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="foot">© 2025 • <a class="muted" href="/data/top1000.csv">top1000.csv</a></div>
+  </section>
 
-<script>
-function xmur3(s){let h=1779033703^s.length;for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353);h=h<<13|h>>>19}return function(){h=Math.imul(h^(h>>>16),2246822507);h=Math.imul(h^(h>>>13),3266489909);return (h^(h>>>16))>>>0}}
-function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
-function shuffleSeed(arr,seed){const r=mulberry32(xmur3(seed)()),a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-
-const today=new Date().toISOString().slice(0,10);
-document.getElementById("today").textContent=today;
-const v=today; // cache-buster
-
-async function loadData(){
-  const [csvAll,csvTop,bans]=await Promise.all([
-    fetch(`/data/followers.csv?v=${v}`).then(r=>{if(!r.ok)throw new Error('followers.csv '+r.status);return r.text()}),
-    fetch(`/data/top1000.csv?v=${v}`).then(r=>r.ok?r.text():""),
-    fetch(`/data/bans.json?v=${v}`).then(r=>r.ok?r.json():[])
-  ]);
-  const followers=(csvAll||"").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-  const banSet=new Set((bans||[]).map(s=>s.toLowerCase()));
-  const base=followers.filter(u=>u&&!banSet.has(u.toLowerCase()));
-  const rawTop=(csvTop||"").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
-  document.getElementById("total").textContent=base.length;
-  document.getElementById("activeCount").textContent=rawTop.length;
-  return {base,rawTop};
-}
-
-function buildLB(base,rawTop,date){
-  const baseLower=new Set(base.map(u=>u.toLowerCase()));
-  const top=rawTop.filter(u=>baseLower.has(u.toLowerCase()));     // listedeki sırayı koru
-  const topLower=new Set(top.map(u=>u.toLowerCase()));
-  const others=base.filter(u=>!topLower.has(u.toLowerCase()));
-  const list=top.concat(shuffleSeed(others,"DAY-"+date));
-  const idx=new Map(); list.forEach((u,i)=>idx.set(u.toLowerCase(),i));
-  return {list,idx};
-}
-
-function render(list,p=1,ps=100){
-  const s=(p-1)*ps,it=list.slice(s,s+ps),tb=document.querySelector("#tbl tbody");
-  tb.innerHTML="";
-  if(!it.length){tb.innerHTML='<tr><td colspan="3" class="muted">Liste boş.</td></tr>';return;}
-  for(let i=0;i<it.length;i++){
-    const rank=s+i+1,tr=document.createElement("tr");
-    tr.innerHTML=`<td>${rank}</td><td>@${it[i]}</td><td class="muted">${rank<=1000?"Öncelikli":""}</td>`;
-    tb.appendChild(tr);
-  }
-}
-
-function showYou(username,lb){
-  const u=(username||"").trim().replace(/^@/,"").toLowerCase(),
-        card=document.getElementById("youCard"),
-        t=document.getElementById("youTitle"),
-        n=document.getElementById("youNeighbors");
-  if(!u){card.style.display="none";return;}
-  const i=lb.idx.get(u);
-  if(i==null){card.style.display="block";t.textContent=`@${u} bugün listede yok.`;n.textContent="";return;}
-  const rank=i+1,total=lb.list.length,pct=((rank/total)*100).toFixed(2),
-        from=Math.max(0,i-3),to=Math.min(total,i+4),
-        neighbors=lb.list.slice(from,to).map((x,j)=>`${from+j+1}. @${x}`).join(" • ");
-  card.style.display="block";t.textContent=`@${u} → #${rank} (top %${pct})`;n.textContent=neighbors;
-}
-
-let LB=null;(async()=>{
-  try{
-    const d=await loadData();
-    LB=buildLB(d.base,d.rawTop,today);
-    render(LB.list,1,100);
-  }catch(e){console.error(e);alert("Veri yüklenemedi.");}
-})();
-document.getElementById("btnPage").onclick=()=>{const p=parseInt(document.getElementById("page").value,10)||1;render(LB.list,p,100)};
-document.getElementById("btnFind").onclick=()=>{showYou(document.getElementById("search").value,LB)};
-</script>
-</body></html>
+  <section id="youCard" class="card" style="display:none">
+    <div class="cardHead">
+      <div class="cardTitle" id="youTitle">—</div>
+      <div class="muted" id="youMeta">—</div>
+    </div>
+    <div id="youNeighbors
