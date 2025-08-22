@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Bugünkü Sıran</title>
+  <title>Takipçi Savaşı</title>
   <style>
     :root{
       --bg:#0b0b12; --card:#151525; --line:#282846; --text:#e8e8f1; --mut:#9aa0b4;
@@ -53,12 +53,14 @@
     .userLink:hover{text-decoration:underline}
 
     @media (max-width:920px){main{grid-template-columns:1fr}}
+    .igBtn{margin-left:auto;background:#1b1b2e;border:1px solid var(--line);border-radius:999px;padding:8px 12px}
+    .igBtn:hover{filter:brightness(1.1)}
   </style>
 </head>
 <body>
   <header>
     <div class="wrap row">
-      <h1>Bugünkü Sıran</h1>
+      <h1>Takipçi Savaşı</h1>
 
       <span class="chip">Tarih
         <input id="day" type="date" min="2025-08-22" style="background:#0f0f1c;border:none;color:#fff">
@@ -67,7 +69,11 @@
       <span class="chip">Toplam <strong id="total">0</strong> kişi</span>
       <span class="chip">Öncelik <strong id="activeCount">1000</strong></span>
 
-      <div class="row" style="margin-left:auto">
+      <a class="igBtn" href="https://www.instagram.com/takipcisavasi" target="_blank" rel="noreferrer">
+        instagram.com/takipcisavasi
+      </a>
+
+      <div class="row">
         <input id="search" placeholder="@kullanıcı bul" />
         <button id="btnFind">Sıramı Göster</button>
       </div>
@@ -79,7 +85,7 @@
     <section class="card">
       <div class="head row">
         <strong>Top 100</strong>
-        <span class="mut">İlk 1000 CSV’den sabit; kalanlar seçilen güne göre deterministik karışır.</span>
+        <!-- açıklama kaldırıldı -->
         <div class="row" style="margin-left:auto">
           <label class="mut">Sayfa</label>
           <select id="page"></select>
@@ -133,8 +139,17 @@ document.getElementById("day").setAttribute("max", todayStr);
 /*** STATE ***/
 const STATE = { all:[], top:[], LB:null, pageSize:100 };
 
-/*** UTIL: normalize usernames to plain (no @, no spaces) ***/
-function norm(u){ return (u||"").trim().replace(/^@/,""); }
+/*** normalize:
+ *  - baştaki "12. " veya "12) " gibi sıra numarasını sil
+ *  - baştaki @ işaretini sil
+ *  - aradaki fazlalıkları temizle
+ */
+function norm(raw){
+  let s = (raw||"").trim();
+  s = s.replace(/^\s*\d+[\.\)]\s*/,''); // baştaki sıra no + . veya ) kaldır
+  s = s.replace(/^@/,'');               // @ kaldır
+  return s.trim();
+}
 
 /*** DATA LOAD ***/
 async function loadData(){
