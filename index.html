@@ -1,1 +1,92 @@
-<!DOCTYPE html><html lang="tr"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Bugünkü Sıran</title><style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:#0b0b12;color:#eee;margin:0}header{padding:16px 20px;border-bottom:1px solid #222;display:flex;gap:12px;align-items:center;flex-wrap:wrap}h1{font-size:20px;margin:0}main{max-width:1000px;margin:0 auto;padding:20px}.card{background:#141422;border:1px solid #26263a;border-radius:12px;padding:16px;margin-bottom:16px}input,button,select{background:#10101a;border:1px solid #333;color:#eee;padding:10px;border-radius:8px}button{cursor:pointer}table{width:100%;border-collapse:collapse}th,td{padding:8px 10px;border-bottom:1px solid #222;font-size:14px}th{color:#bbb;text-align:left}.muted{color:#aaa}.badge{background:#1e1e2e;border:1px solid #32324a;border-radius:999px;padding:4px 10px;font-size:12px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.right{margin-left:auto}</style></head><body><header><h1>Bugünkü Sıran</h1><span class="badge" id="today"></span><span class="badge">Toplam <span id="total">0</span> kişi</span><span class="badge">Aktif havuz: <span id="activeCount">0</span></span><div class="right row"><input id="search" placeholder="@kullanıcı bul"/><button id="btnFind">Sırayı Göster</button></div></header><main><div class="card"><div class="row"><strong>Top 100</strong><div class="right row"><label class="muted">Sayfa: </label><select id="page"><option value="1">1</option><option value="2">2</option></select><button id="btnPage">Görüntüle</button></div></div><div class="muted" style="margin:8px 0 12px">Üst sıralarda “Aktif havuz” önceliklidir. Sıralama günlük olarak yenilenir.</div><table id="tbl"><thead><tr><th>#</th><th>Kullanıcı</th><th class="muted">Not</th></tr></thead><tbody></tbody></table></div><div class="card" id="youCard" style="display:none"><strong id="youTitle"></strong><div id="youNeighbors" class="muted" style="margin-top:8px"></div></div></main><script>function xmur3(e){let t=1779033703^e.length;for(let n=0;n<e.length;n++)t=Math.imul(t^e.charCodeAt(n),3432918353),t=t<<13|t>>>19;return function(){return t=Math.imul(t^(t>>>16),2246822507),t=Math.imul(t^(t>>>13),3266489909),(t^(t>>>16))>>>0}}function mulberry32(e){return function(){let t=e+=1831565813;t=Math.imul(t^t>>>15,t|1),t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}function shuffleSeed(e,t){const n=xmur3(t)(),a=mulberry32(n),r=e.slice();for(let e=r.length-1;e>0;e--){const t=Math.floor(a()*(e+1));[r[e],r[t]]=[r[t],r[e]]}return r}const fmtDate=e=>e.toISOString().slice(0,10),todayStr=fmtDate(new Date);document.getElementById("today").textContent=todayStr;async function loadData(){const[e,t,n]=await Promise.all([fetch("/data/followers.csv").then(e=>e.text()),fetch("/data/active_pool.json").then(e=>e.json()).catch(()=>[]),fetch("/data/bans.json").then(e=>e.json()).catch(()=>[])]),a=e.split(/\r?\n/).map(e=>e.trim()).filter(Boolean),r=new Set((n||[]).map(e=>e.toLowerCase())),o=a.filter(e=>!r.has(e.toLowerCase()));return document.getElementById("total").textContent=o.length,document.getElementById("activeCount").textContent=(t||[]).length,{base:o,active:new Set((t||[]).map(e=>e.toLowerCase()))}}function buildDailyLeaderboard(e,t,n){const a="DAY-"+n,r=[],o=shuffleSeed(r,a+"-pinned"),d=shuffleSeed(e.filter(e=>t.has(e.toLowerCase())&&!r.includes(e)),a+"-core"),l=shuffleSeed(e.filter(e=>!t.has(e.toLowerCase())&&!r.includes(e)),a+"-general"),c=d.slice(0,600),i=l.slice(0,400),s=l.slice(400).concat(d.slice(600)),u=o.concat(c,i,s),f=new Map;return u.forEach((e,t)=>f.set(e.toLowerCase(),t)),{list:u,idx:f}}function renderTable(e,t=1,n=100){const a=(t-1)*n,r=e.slice(a,a+n),o=document.querySelector("#tbl tbody");o.innerHTML="";for(let e=0;e<r.length;e++){const t=a+e+1,n=document.createElement("tr");n.innerHTML*_]()*
+<script>
+/* PRNG + shuffle (deterministik) */
+function xmur3(s){let h=1779033703^s.length;for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353);h=h<<13|h>>>19}return function(){h=Math.imul(h^(h>>>16),2246822507);h=Math.imul(h^(h>>>13),3266489909);return (h^(h>>>16))>>>0}}
+function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296}}
+function shuffleSeed(arr,seedStr){const seed=xmur3(seedStr)();const rand=mulberry32(seed);const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+const todayStr=new Date().toISOString().slice(0,10);
+document.getElementById("today").textContent=todayStr;
+const v=todayStr; // cache-buster
+
+/* Veri yükleme: followers + top1000 + bans */
+async function loadData(){
+  const [csvAll,csvTop,bans] = await Promise.all([
+    fetch(`/data/followers.csv?v=${v}`).then(r=>{if(!r.ok)throw new Error('followers.csv '+r.status);return r.text()}),
+    fetch(`/data/top1000.csv?v=${v}`).then(r=>r.ok?r.text():"").catch(()=>""), // opsiyonel
+    fetch(`/data/bans.json?v=${v}`).then(r=>r.ok?r.json():[]).catch(()=>[])
+  ]).catch(err=>{
+    console.error('DATA LOAD ERROR:', err);
+    alert('Veri yüklenemedi: '+err.message);
+    return ["","",[]];
+  });
+
+  const followers = (csvAll||"").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  const banSet = new Set((bans||[]).map(s=>s.toLowerCase()));
+  const base = followers.filter(u=>!banSet.has((u||"").toLowerCase()));
+
+  // top1000 dosyası varsa ÖNCELİKLE onu uygula (sırayı koru)
+  const rawTop = (csvTop||"").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  const topSet = new Set(rawTop.map(s=>s.toLowerCase()));
+
+  document.getElementById("total").textContent = base.length;
+  document.getElementById("activeCount").textContent = rawTop.length || 0; // rozette sayıyı gösterelim
+
+  return { base, rawTop, topSet };
+}
+
+/* Günlük sıralama: top1000 + karışık diğerleri */
+function buildDailyLeaderboard(base, rawTop, topSet, dateStr){
+  // 1) top listesinde olup gerçek listede de bulunanları sırayı BOZMADAN al
+  const top = rawTop.filter(u => topSet.has(u.toLowerCase()) && base.some(b=>b.toLowerCase()===u.toLowerCase()));
+
+  // 2) diğerleri (top’ta olmayanlar)
+  const baseSet = new Set(base.map(u=>u.toLowerCase()));
+  const topLower = new Set(top.map(u=>u.toLowerCase()));
+  const others = base.filter(u => !topLower.has(u.toLowerCase()) && baseSet.has(u.toLowerCase()));
+
+  // 3) günü seed alarak diğerlerini karıştır ve finali oluştur
+  const shuffledOthers = shuffleSeed(others, "DAY-"+dateStr);
+  const list = top.concat(shuffledOthers);
+
+  // index map
+  const idx = new Map(); list.forEach((u,i)=>idx.set(u.toLowerCase(), i));
+  return { list, idx };
+}
+
+/* UI */
+function renderTable(list, page=1, pageSize=100){
+  const start=(page-1)*pageSize, items=list.slice(start,start+pageSize);
+  const tb=document.querySelector("#tbl tbody"); tb.innerHTML="";
+  for(let i=0;i<items.length;i++){
+    const rank=start+i+1;
+    const tr=document.createElement("tr");
+    tr.innerHTML = `<td>${rank}</td><td>@${items[i]}</td><td class="muted">${rank<=1000?"Öncelikli liste":""}</td>`;
+    tb.appendChild(tr);
+  }
+}
+function showYou(username, lb){
+  const u=(username||"").trim().replace(/^@/,"");
+  const youCard=document.getElementById("youCard");
+  const title=document.getElementById("youTitle");
+  const neigh=document.getElementById("youNeighbors");
+  if(!u){youCard.style.display="none";return}
+  const i=lb.idx.get(u.toLowerCase());
+  if(i==null){youCard.style.display="block";title.textContent=`@${u} bugün listede bulunamadı.`;neigh.textContent="";return}
+  const rank=i+1, total=lb.list.length, pct=((rank/total)*100).toFixed(2);
+  const from=Math.max(0,i-3), to=Math.min(total,i+4);
+  const neighbors=lb.list.slice(from,to).map((x,j)=>`${from+j+1}. @${x}`).join(" • ");
+  youCard.style.display="block";
+  title.textContent=`@${u} → #${rank} (top %${pct})`;
+  neigh.textContent=neighbors;
+}
+
+/* Başlat */
+let LB=null;
+(async function(){
+  const data = await loadData();
+  LB = buildDailyLeaderboard(data.base, data.rawTop, data.topSet, todayStr);
+  renderTable(LB.list,1,100);
+})();
+document.getElementById("btnPage").onclick=()=>{const p=parseInt(document.getElementById("page").value,10)||1;renderTable(LB.list,p,100)};
+document.getElementById("btnFind").onclick=()=>{const v=document.getElementById("search").value;showYou(v,LB)};
+</script>
