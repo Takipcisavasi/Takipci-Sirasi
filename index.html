@@ -68,9 +68,19 @@
     }
     .cup{filter:drop-shadow(0 0 2px #0005)}
     .gold{color:#ffd54a}.silver{color:#cfd8dc}.bronze{color:#ffab7a}
-    .footer{
-      margin-top:8px;font-size:12px;color:#9aa
+    .footer{margin-top:8px;font-size:12px;color:#9aa}
+
+    /* --- Sorgu sonucu barı ve vurgu --- */
+    .youbar{
+      display:none;align-items:center;gap:10px;background:#10142a;
+      border:1px solid #2a2f47;border-radius:10px;padding:8px 10px;margin-bottom:10px
     }
+    .youbar .pill{
+      background:#0f2b1e;border:1px solid #2a7a56;color:#baf8d2;
+      border-radius:999px;padding:4px 8px;font-weight:700
+    }
+    .tr-hi{background:#0f2b1e !important}
+    .tr-hi td{border-bottom-color:#1c4b3a}
   </style>
 </head>
 <body>
@@ -104,6 +114,9 @@
             <button id="btnPage">Görüntüle</button>
           </div>
         </div>
+
+        <!-- Sorgu sonucu barı -->
+        <div id="youBar" class="youbar"></div>
 
         <table id="tbl">
           <thead>
@@ -192,20 +205,21 @@
     }
 
     /* ---------- renderlar ---------- */
-    function renderTable(lb, page=1, pageSize=100){
+    function renderTable(lb, page=1, pageSize=100, highlightUser=null){
       const start = (page-1)*pageSize;
       const items = lb.list.slice(start, start+pageSize);
       const tb = $("#tbl tbody");
       tb.innerHTML = "";
 
+      let hiRow = null;
+
       for (let i=0;i<items.length;i++){
         const rank = start+i+1;
         const u = items[i];
-
         const tag = rank <= lb.topFixedCount ? 'Öncelik' : '';
         const userLink = `https://www.instagram.com/${u}`;
 
-        tb.insertAdjacentHTML("beforeend",
+        const rowHTML =
           `<tr>
             <td>${rank}</td>
             <td>
@@ -221,7 +235,18 @@
               </a>
             </td>
             <td>${tag?`<span class="chip">${tag}</span>`:''}</td>
-          </tr>`);
+          </tr>`;
+        tb.insertAdjacentHTML("beforeend", rowHTML);
+
+        if (highlightUser && u.toLowerCase() === highlightUser.toLowerCase()){
+          hiRow = tb.lastElementChild;
+          hiRow.classList.add("tr-hi");
+        }
+      }
+
+      // seçilen satıra yumuşak scroll
+      if(hiRow){
+        setTimeout(()=> hiRow.scrollIntoView({behavior:"smooth", block:"center"}), 50);
       }
     }
 
@@ -251,16 +276,35 @@
       });
     }
 
+    // üstte sonuç barını doldur
+    function showBanner(u, rank){
+      const el = $("#youBar");
+      el.innerHTML =
+        `<img class="ava"
+              src="${avatarURL(u)}"
+              referrerpolicy="no-referrer"
+              onerror="this.onerror=null; this.src='${avatarFallback(u)}';"
+              alt="">
+         <a class="userLink" href="https://www.instagram.com/${u}" target="_blank" rel="noreferrer">@${u}</a>
+         <span class="pill">#${rank}</span>`;
+      el.style.display = "flex";
+    }
+
     function showUser(username, lb){
       const u = (username||"").trim().replace(/^@/,"");
       if(!u) return;
       const i = lb.idx.get(u.toLowerCase());
-      if(i==null){ alert("@"+u+" bugün listede bulunamadı."); return; }
+      if(i==null){ 
+        $("#youBar").style.display="none";
+        alert("@"+u+" bugün listede bulunamadı."); 
+        return; 
+      }
+      const rank = i+1;
+      showBanner(u, rank);
+
       const page = Math.floor(i/100)+1;
       $("#page").value = String(page);
-      renderTable(lb, page, 100);
-      // kısa bir highlight istersek:
-      // + ileri geliştirmeye açık
+      renderTable(lb, page, 100, u);
     }
 
     /* ---------- init ---------- */
@@ -281,6 +325,7 @@
     $("#btnPage").onclick = ()=>{
       const p = parseInt($("#page").value,10)||1;
       renderTable(LB, p, 100);
+      $("#youBar").style.display="none";
     };
     $("#btnShow").onclick = ()=>{
       showUser($("#q").value, LB);
