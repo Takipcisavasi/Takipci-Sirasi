@@ -1,60 +1,62 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Takipçi Savaşı</title>
-<style>
-  :root{
-    --bg:#0b0b12; --card:#141422; --muted:#9aa; --text:#eee; --border:#26263a;
-    --accent:#7e86ff; --chip:#1d1d2b; --chip-b:#32324a;
-    --highlight:#103d2c; --highlight-border:#20c384;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;background:var(--bg);color:var(--text);
-            font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-  a{color:inherit;text-decoration:none}
-  .wrap{max-width:1150px;margin:0 auto;padding:16px}
-  header{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
-  h1{margin:0;font-size:22px}
-  .badge{background:var(--chip);border:1px solid var(--chip-b);padding:6px 10px;border-radius:999px;color:#d0d0ff;font-size:12px}
-  .btn{background:var(--accent);border:0;color:#fff;padding:10px 14px;border-radius:10px;cursor:pointer}
-  .ghost{background:#1c1c2a;color:#cfd0ff}
-  .grow{flex:1}
-  input,select{background:#10101a;color:var(--text);border:1px solid #2b2b3c;border-radius:10px;padding:10px 12px}
-  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px}
-  .grid{display:grid;grid-template-columns:2fr 1fr;gap:12px}
-  @media (max-width:900px){.grid{grid-template-columns:1fr}}
-  table{width:100%;border-collapse:collapse}
-  th,td{padding:10px;border-bottom:1px solid #1c1c2b}
-  th{color:var(--muted);font-weight:600;text-align:left}
-  .muted{color:var(--muted)}
-  .right{margin-left:auto}
-  .top5-item{display:flex;align-items:center;gap:12px;background:#11111b;border:1px solid var(--border);padding:10px;border-radius:12px}
-  .rankDot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#1a1a27;border:1px solid #2b2b3c;color:#cfd0ff;font-weight:700}
-  .cup{font-size:14px}
-  .hl{background:var(--highlight)!important;border-left:3px solid var(--highlight-border)}
-  .chip{background:var(--chip);border:1px solid var(--chip-b);padding:6px 10px;border-radius:999px;font-size:12px}
-  .footer{opacity:.6;font-size:12px;margin-top:8px}
-  .error{background:#2a1212;border:1px solid #5e2a2a;color:#ffbdbd;padding:10px;border-radius:10px;margin:8px 0;display:none}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Takipçi Savaşı</title>
+  <style>
+    :root{
+      --bg:#0b0b12; --card:#141422; --muted:#aaa; --text:#eee; --border:#26263a;
+      --accent:#7e86ff; --accent-2:#5a64ff;
+      --chip:#1d1d2b; --chip-b:#32324a;
+      --highlight:#103d2c; --highlight-border:#20c384;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:1150px;margin:0 auto;padding:16px}
+    header{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+    h1{margin:0;font-size:22px;white-space:nowrap}
+    .badge{background:var(--chip);border:1px solid var(--chip-b);padding:6px 10px;border-radius:999px;color:#d0d0ff;font-size:12px;white-space:nowrap}
+    .btn{background:var(--accent);border:0;color:#fff;padding:10px 14px;border-radius:10px;cursor:pointer}
+    .ghost{background:#1c1c2a;color:#cfd0ff}
+    .btn:active{transform:translateY(1px)}
+    .grow{flex:1}
+    input,select{background:#10101a;color:var(--text);border:1px solid #2b2b3c;border-radius:10px;padding:10px 12px}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px}
+    .grid{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px solid #1c1c2b}
+    th{color:var(--muted);font-weight:600;text-align:left}
+    .muted{color:var(--muted)}
+    .right{margin-left:auto}
+    .top5-item{display:flex;align-items:center;gap:10px;background:#11111b;border:1px solid var(--border);padding:10px;border-radius:12px}
+    .rankDot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#1a1a27;border:1px solid #2b2b3c;color:#cfd0ff;font-weight:700}
+    .cup{font-size:14px}
+    .hl{background:var(--highlight)!important;border-left:3px solid var(--highlight-border)}
+    .chip{background:var(--chip);border:1px solid var(--chip-b);padding:6px 10px;border-radius:999px;font-size:12px}
+    .chip.ok{background:#11251d;border-color:#1e6346;color:#73f0b9}
+    .footer{opacity:.6;font-size:12px;margin-top:8px}
+    .loading{opacity:.7}
+  </style>
 </head>
 <body>
   <div class="wrap">
     <header>
       <h1>Takipçi Savaşı</h1>
+      <span class="chip" id="today"></span>
       <span class="badge">Toplam <b id="total">0</b> kişi</span>
       <div class="grow"></div>
       <a class="badge" href="https://instagram.com/takipcisavasi" target="_blank" rel="noopener">instagram.com/takipcisavasi</a>
     </header>
 
-    <div id="err" class="error"></div>
-
     <div class="row" style="margin-bottom:12px">
       <input id="q" placeholder="@kullanıcı bul" class="grow" />
       <button id="btnFind" class="btn">Sırayı Göster</button>
       <span class="chip" id="foundInfo" style="display:none"></span>
+
       <div class="right row">
         <label class="muted">Sayfa:</label>
         <select id="page"></select>
@@ -67,11 +69,14 @@
         <div class="row" style="margin-bottom:8px">
           <strong>Top 100</strong>
         </div>
+
         <table id="tbl">
           <thead>
             <tr><th style="width:56px">#</th><th>Kullanıcı</th><th class="muted" style="width:130px">Not</th></tr>
           </thead>
-          <tbody><tr><td colspan="3" class="muted" id="loadingCell">Yükleniyor…</td></tr></tbody>
+          <tbody>
+            <tr class="loading"><td colspan="3">Yükleniyor…</td></tr>
+          </tbody>
         </table>
         <div class="footer muted">© 2025</div>
       </section>
@@ -86,131 +91,185 @@
   </div>
 
 <script>
-/* ---------- Sıra BİREBİR korunur: ilk kullanıcı adı regex ile çekilir ---------- */
-function parseCSV(raw){
-  return raw.split(/\r?\n/).map(line=>{
-    const s = String(line).trim();
-    if(!s) return "";
-    // En baştaki numaralandırmaları temizle (1., 1) 1- vb.)
-    const t = s.replace(/^\s*\d+[\.)-]?\s*/,"");
-    // Satırdaki ilk kullanıcı adı: @? [A-Za-z0-9._]
-    const m = t.match(/@?[A-Za-z0-9._]+/);
-    return m ? m[0].replace(/^@/,"") : "";
-  }).filter(Boolean);
+/* ------------------ SÜRÜM / CACHE KIRICI ------------------ */
+const ASSET_VERSION = '2025-08-23-01'; // CSV güncellendikçe değiştir
+
+/* ------------------ GÖRSEL BİLGİ ------------------ */
+const todayStr = new Date().toISOString().slice(0,10);
+document.getElementById('today').textContent = todayStr;
+
+/* ------------------ CSV PARSER (SIRAYI KORUR) ------------------ */
+function parseCSVKeepOrder(raw){
+  const text = raw.replace(/^\uFEFF/, ''); // BOM
+  const lines = text.split(/\r?\n/);
+  const out = [];
+
+  for (let line of lines){
+    if (!line) continue;
+    let s = String(line).trim();
+    if (!s) continue;
+
+    // Baştaki numarayı kaldır: "1.", "1)", "1-"
+    s = s.replace(/^\s*\d+[\.)-]?\s*/, '');
+
+    // Virgül varsa ilk sütunu al
+    if (s.includes(',')) s = s.split(',')[0].trim();
+
+    // İlk kullanıcı adı: @?harf.rakam._
+    const m = s.match(/@?[A-Za-z0-9._]+/);
+    if (!m) continue;
+
+    out.push(m[0].replace(/^@/, '')); // normalize
+  }
+  return out;
 }
 
+/* ------------------ DURUMLAR ------------------ */
 const PAGE_SIZE = 100;
-let LIST = [];
-let INDEX = new Map();
+let LIST = [];             // sırası değişmeyen tam liste
+let INDEX = new Map();     // username -> index (0-based)
 
+/* ------------------ UI Yardımcıları ------------------ */
 function fillPageSelect(total){
-  const pages=Math.max(1,Math.ceil(total/PAGE_SIZE));
-  const sel=document.getElementById("page");
-  sel.innerHTML="";
-  for(let i=1;i<=pages;i++){
-    const o=document.createElement("option");
-    o.value=String(i); o.textContent=String(i);
+  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const sel = document.getElementById('page');
+  sel.innerHTML = '';
+  for (let i=1;i<=pages;i++){
+    const o = document.createElement('option');
+    o.value = String(i);
+    o.textContent = String(i);
     sel.appendChild(o);
   }
 }
 
 function renderTop5(){
-  const c=document.getElementById("top5");
-  c.innerHTML="";
-  const first5 = LIST.slice(0,5);
+  const c = document.getElementById('top5');
+  c.innerHTML = '';
+  const first5 = LIST.slice(0, 5);
   first5.forEach((u,i)=>{
-    const row=document.createElement("div"); row.className="top5-item";
-    const dot=document.createElement("div"); dot.className="rankDot"; dot.textContent=String(i+1);
-    const name=document.createElement("div"); name.textContent="@"+u;
-    const cup=document.createElement("div"); cup.className="cup";
-    if(i===0) cup.textContent="🏆";
-    else if(i===1) cup.textContent="🥈";
-    else if(i===2) cup.textContent="🥉";
+    const row=document.createElement('div');
+    row.className='top5-item';
+    const dot=document.createElement('div');
+    dot.className='rankDot';
+    dot.textContent=String(i+1);
+    const name=document.createElement('div');
+    name.textContent='@'+u;
+    const cup=document.createElement('div');
+    cup.className='cup';
+    if(i===0) cup.textContent='🏆';
+    else if(i===1) cup.textContent='🥈';
+    else if(i===2) cup.textContent='🥉';
     row.appendChild(dot); row.appendChild(name); row.appendChild(cup);
     c.appendChild(row);
   });
 }
 
 function renderTable(page=1, highlightUser){
-  const tb=document.querySelector("#tbl tbody");
-  tb.innerHTML="";
-  const start=(page-1)*PAGE_SIZE;
-  const items=LIST.slice(start,start+PAGE_SIZE);
-  const hi = highlightUser ? highlightUser.toLowerCase() : null;
+  const start = (page-1)*PAGE_SIZE;
+  const items = LIST.slice(start, start+PAGE_SIZE);
+  const tb = document.querySelector('#tbl tbody');
+  tb.innerHTML = '';
 
-  items.forEach((u,i)=>{
-    const tr=document.createElement("tr");
-    const td1=document.createElement("td"); td1.textContent=start+i+1;
-    const td2=document.createElement("td"); td2.textContent="@"+u;
-    const td3=document.createElement("td"); td3.className="muted"; td3.textContent="";
+  const hl = highlightUser ? highlightUser.toLowerCase() : null;
+
+  for (let i=0;i<items.length;i++){
+    const tr = document.createElement('tr');
+    const rank = start + i + 1;
+
+    const td1 = document.createElement('td'); td1.textContent = rank;
+    const td2 = document.createElement('td'); td2.textContent = '@'+items[i];
+    const td3 = document.createElement('td'); td3.className='muted'; td3.textContent = '';
+
     tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
-    if(hi && u.toLowerCase()===hi){ tr.classList.add("hl"); }
+
+    if (hl && items[i].toLowerCase() === hl){
+      tr.classList.add('hl');
+    }
     tb.appendChild(tr);
-  });
+  }
 }
 
-function scrollToRank(rank){
-  const page=Math.max(1,Math.ceil(rank/PAGE_SIZE));
-  document.getElementById("page").value=String(page);
-  renderTable(page);
+/* Arama → ilgili sayfayı aç + highlight + info chip */
+function findAndShow(username){
+  const info = document.getElementById('foundInfo');
+  if (!username){ info.style.display='none'; return; }
+
+  const key = username.replace(/^@/,'').trim().toLowerCase();
+  const pos = INDEX.get(key);
+
+  if (pos == null){
+    info.textContent = '@'+username+' bulunamadı';
+    info.className = 'chip';
+    info.style.display = 'inline-block';
+    return;
+  }
+  const rank = pos + 1;
+  info.textContent = '@'+username+' → #'+rank;
+  info.className = 'chip ok';
+  info.style.display = 'inline-block';
+
+  const page = Math.max(1, Math.ceil(rank / PAGE_SIZE));
+  document.getElementById('page').value = String(page);
+  renderTable(page, key);
+
+  // Satırı ortaya kaydır
+  const tb=document.querySelector("#tbl tbody");
   const idxInPage=(rank-1)%PAGE_SIZE;
-  const tr=document.querySelector("#tbl tbody").children[idxInPage];
-  if(tr){ tr.classList.add("hl"); tr.scrollIntoView({behavior:"smooth",block:"center"}); }
+  const tr=tb.children[idxInPage];
+  if(tr){ tr.scrollIntoView({behavior:'smooth',block:'center'}); }
 }
 
+/* ------------------ VERİYİ YÜKLE ------------------ */
 async function loadAll(){
-  const errBox = document.getElementById("err");
+  const tb = document.querySelector('#tbl tbody');
+  tb.innerHTML = '<tr class="loading"><td colspan="3">Yükleniyor…</td></tr>';
+
   try{
-    const csvText = await fetch("./data/followers.csv",{cache:"no-store"}).then(r=>{
-      if(!r.ok) throw new Error("followers.csv yüklenemedi ("+r.status+")");
-      return r.text();
-    });
-    LIST = parseCSV(csvText);       // >>> SIRA AYNEN KORUNUR
+    const [csvText, bans] = await Promise.all([
+      fetch(./data/followers.csv?v=${ASSET_VERSION}, {cache:'no-store'}).then(r=>{
+        if(!r.ok) throw new Error('followers.csv ' + r.status);
+        return r.text();
+      }),
+      fetch(./data/bans.json?v=${ASSET_VERSION}, {cache:'no-store'}).then(r=>r.ok?r.json():[])
+    ]);
+
+    const rawList = parseCSVKeepOrder(csvText);
+    const banSet = new Set((bans||[]).map(s=>String(s).toLowerCase()));
+
+    // sırayı bozmadan ban'leri at
+    LIST = rawList.filter(u=>u && !banSet.has(u.toLowerCase()));
+    document.getElementById('total').textContent = LIST.length;
+
+    // index’i kur
     INDEX.clear();
     LIST.forEach((u,i)=>INDEX.set(u.toLowerCase(), i));
-    document.getElementById("total").textContent = LIST.length;
 
     fillPageSelect(LIST.length);
     renderTable(1);
     renderTop5();
-  }catch(e){
-    errBox.style.display="block";
-    errBox.textContent = "Veri yüklenemedi: " + e.message;
-    console.error(e);
+
+  }catch(err){
+    console.error(err);
+    tb.innerHTML = <tr class="loading"><td colspan="3">Yükleme hatası: ${String(err.message||err)}</td></tr>;
   }
 }
 
-/* UI */
-document.getElementById("btnPage").onclick=()=>{
-  const p=parseInt(document.getElementById("page").value,10)||1;
+/* ------------------ BAŞLAT / EVENTLER ------------------ */
+loadAll();
+
+document.getElementById('btnPage').onclick = ()=>{
+  const p = parseInt(document.getElementById('page').value,10)||1;
   renderTable(p);
 };
 
-function findAndShow(){
-  const v=document.getElementById("q").value.trim();
-  const info=document.getElementById("foundInfo");
-  if(!v){ info.style.display="none"; return; }
-  const key = v.replace(/^@/,"").toLowerCase();
-  const pos = INDEX.get(key);
-  if(pos==null){
-    info.textContent="@"+v+" bulunamadı";
-    info.className="chip";
-    info.style.display="inline-block";
-    return;
-  }
-  const rank=pos+1;
-  info.textContent="@"+v+" → #"+rank;
-  info.className="chip";
-  info.style.display="inline-block";
-  scrollToRank(rank);
-}
-document.getElementById("btnFind").onclick=findAndShow;
-document.getElementById("q").addEventListener("keydown",e=>{
-  if(e.key==="Enter") findAndShow();
-});
+document.getElementById('btnFind').onclick = ()=>{
+  const q = document.getElementById('q').value;
+  findAndShow(q);
+};
 
-/* Start */
-loadAll();
+document.getElementById('q').addEventListener('keydown',e=>{
+  if(e.key==='Enter') document.getElementById('btnFind').click();
+});
 </script>
 </body>
 </html>
