@@ -6,218 +6,241 @@
 <title>Takipçi Savaşı</title>
 <style>
   :root{
-    --bg:#0b0b12; --card:#141422; --muted:#a9a9b5; --text:#eaeaf2;
-    --line:#26263a; --accent:#7c83ff; --chip:#1f2030; --ok:#39d98a;
-    --row:#101021; --row2:#0f0f19;
+    --bg:#0b0b12; --card:#141422; --muted:#9aa; --text:#eee; --border:#26263a;
+    --accent:#7e86ff; --accent-2:#5a64ff; --ok:#15c27a;
+    --chip:#1d1d2b; --chip-b:#32324a;
+    --highlight:#103d2c; --highlight-border:#20c384;
   }
   *{box-sizing:border-box}
   html,body{margin:0;background:var(--bg);color:var(--text);
-    font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial}
+            font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
   a{color:inherit;text-decoration:none}
-  header{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
-    max-width:1200px;margin:16px auto 8px;padding:0 16px}
-  h1{margin:0;font-size:20px}
-  .tag{background:var(--chip);border:1px solid var(--line);color:var(--muted);
-    padding:6px 10px;border-radius:999px;font-size:12px}
+  .wrap{max-width:1150px;margin:0 auto;padding:16px}
+  header{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+  h1{margin:0;font-size:22px}
+  .badge{background:var(--chip);border:1px solid var(--chip-b);padding:6px 10px;border-radius:999px;color:#d0d0ff;font-size:12px}
+  .btn{background:var(--accent);border:0;color:#fff;padding:10px 14px;border-radius:10px;cursor:pointer}
+  .ghost{background:#1c1c2a;color:#cfd0ff}
+  .btn:active{transform:translateY(1px)}
   .grow{flex:1}
-  main{max-width:1200px;margin:0 auto;padding:0 16px 24px}
-  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
-  input,select,button{background:var(--row);border:1px solid var(--line);color:var(--text);
-    border-radius:10px;padding:10px 12px}
-  button{cursor:pointer}
-  .btn{background:var(--accent);color:#fff;border:none}
-  .btn-ghost{background:var(--chip);border:1px solid var(--line);color:var(--text)}
-  .grid{display:grid;grid-template-columns:1fr 320px;gap:12px;margin-top:12px}
-  @media(max-width:980px){.grid{grid-template-columns:1fr}}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
-  .card h3{margin:0 0 8px 0;font-size:14px;color:var(--muted)}
+  input,select{background:#10101a;color:var(--text);border:1px solid #2b2b3c;border-radius:10px;padding:10px 12px}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px}
+  .grid{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+  @media (max-width:900px){.grid{grid-template-columns:1fr}}
   table{width:100%;border-collapse:collapse}
-  th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left}
-  th{color:var(--muted)}
-  tbody tr:hover{background:var(--row2)}
+  th,td{padding:10px;border-bottom:1px solid #1c1c2b}
+  th{color:var(--muted);font-weight:600;text-align:left}
   .muted{color:var(--muted)}
-  .hl{background:rgba(57,217,138,.14)!important}
-  .chip{background:var(--chip);border:1px solid var(--line);border-radius:999px;padding:4px 8px;font-size:12px}
-  .chip.ok{color:#bfffe2;border-color:#2f7b5d;background:#0d1b12}
-  .usercell{display:flex;align-items:center;gap:10px}
-  .ava{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:#0e0e18;flex:0 0 28px;object-fit:cover}
-  .top5{list-style:none;margin:0;padding:0}
-  .top5 li{display:flex;align-items:center;gap:10px;background:var(--row);border:1px solid var(--line);
-    border-radius:10px;padding:10px;margin-bottom:8px}
-  .badge{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--chip);color:var(--muted);font-weight:700}
+  .right{margin-left:auto}
+  .top5-item{display:flex;align-items:center;gap:12px;background:#11111b;border:1px solid var(--border);padding:10px;border-radius:12px}
+  .rankDot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#1a1a27;border:1px solid #2b2b3c;color:#cfd0ff;font-weight:700}
+  .cup{font-size:14px}
+  .success{background:#11251d;border:1px solid #1e6346;color:#73f0b9}
+  .hl{background:var(--highlight)!important;border-left:3px solid var(--highlight-border)}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{background:var(--chip);border:1px solid var(--chip-b);padding:6px 10px;border-radius:999px;font-size:12px}
+  .footer{opacity:.6;font-size:12px;margin-top:8px}
+  .error{background:#2a1212;border:1px solid #5e2a2a;color:#ffbdbd;padding:10px;border-radius:10px;margin:8px 0}
 </style>
 </head>
 <body>
-  <header>
-    <h1>Takipçi Savaşı</h1>
-    <span class="tag">Toplam <b id="total">0</b> kişi</span>
-    <div class="grow"></div>
-    <a class="tag" href="https://www.instagram.com/takipcisavasi" target="_blank" rel="noopener">instagram.com/takipcisavasi</a>
-  </header>
+  <div class="wrap">
+    <header>
+      <h1>Takipçi Savaşı</h1>
+      <span class="badge">Toplam <b id="total">0</b> kişi</span>
+      <div class="grow"></div>
+      <a class="badge" href="https://instagram.com/takipcisavasi" target="_blank" rel="noopener">instagram.com/takipcisavasi</a>
+    </header>
 
-  <main>
-    <div class="row">
+    <div id="err" style="display:none" class="error"></div>
+
+    <div class="row" style="margin-bottom:12px">
       <input id="q" placeholder="@kullanıcı bul" class="grow" />
       <button id="btnFind" class="btn">Sırayı Göster</button>
-      <span id="found" class="chip" style="display:none"></span>
-      <div class="row" style="margin-left:auto">
-        <label class="muted">Sayfa</label>
+      <span class="chip" id="foundInfo" style="display:none"></span>
+      <div class="right row">
+        <label class="muted">Sayfa:</label>
         <select id="page"></select>
-        <button id="btnPage" class="btn-ghost">Görüntüle</button>
+        <button id="btnPage" class="btn ghost">Görüntüle</button>
       </div>
     </div>
 
     <div class="grid">
       <section class="card">
-        <h3>Top 100</h3>
+        <div class="row" style="margin-bottom:8px">
+          <strong>Top 100</strong>
+        </div>
         <table id="tbl">
-          <thead><tr><th style="width:64px">#</th><th>Kullanıcı</th><th class="muted" style="width:120px">Not</th></tr></thead>
-          <tbody><tr><td colspan="3" class="muted">Yükleniyor…</td></tr></tbody>
+          <thead><tr><th style="width:56px">#</th><th>Kullanıcı</th><th class="muted" style="width:130px">Not</th></tr></thead>
+          <tbody><tr><td colspan="3" class="muted" id="loadingCell">Yükleniyor…</td></tr></tbody>
         </table>
+        <div class="footer muted">© 2025</div>
       </section>
 
       <aside class="card">
-        <h3>İlk 5</h3>
-        <ol id="top5" class="top5"></ol>
+        <div class="row" style="margin-bottom:8px">
+          <strong>İlk 5</strong>
+        </div>
+        <div id="top5" class="row" style="flex-direction:column;gap:8px"></div>
       </aside>
     </div>
-  </main>
+  </div>
 
 <script>
-(function(){
-  const CSV_URL = '/data/ranking.csv';   // tek veri kaynağı
-  const PAGE_SIZE = 100;
-
-  const $ = s => document.querySelector(s);
-  const TBL = $('#tbl tbody');
-  const PAGE = $('#page');
-  const TOTAL = $('#total');
-  const TOP5 = $('#top5');
-  const FOUND = $('#found');
-
-  let LIST = [];
-  let INDEX = new Map();
-  let currentPage = 1;
-
-  const norm = s => (s||'').trim().replace(/^@/,'').toLowerCase();
-
-  function uniquePreserve(arr){
-    const seen=new Set(), out=[];
-    for(const raw of arr){
-      const u=norm(raw);
-      if(!u) continue;
-      if(seen.has(u)) continue;
-      seen.add(u);
-      out.push(u);
-    }
-    return out;
+/* ===== Yardımcılar ===== */
+function cleanUser(raw){
+  if(!raw) return "";
+  const s = String(raw).trim();
+  // satırdaki son "kelimeyi" al (boşluklara göre), @ varsa at
+  const parts = s.split(/\s+/);
+  const last = parts[parts.length-1] || "";
+  return last.replace(/^@/,"").replace(/[^a-zA-Z0-9._]/g,"");
+}
+function parseCSV(raw){
+  return raw
+    .split(/\r?\n/)
+    .map(l=>cleanUser(l))
+    .filter(Boolean);
+}
+function dedupeKeepFirst(arr){
+  const seen = new Set();
+  const out = [];
+  for(const u of arr){
+    const k = u.toLowerCase();
+    if(seen.has(k)) continue;
+    seen.add(k);
+    out.push(u);
   }
+  return out;
+}
 
-  async function load(){
-    try{
-      const r = await fetch(CSV_URL, {cache:'no-store'});
-      if(!r.ok) throw new Error('ranking.csv '+r.status);
-      const text = await r.text();
-      LIST = uniquePreserve(text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean));
-      INDEX.clear(); LIST.forEach((u,i)=>INDEX.set(u,i));
-      TOTAL.textContent = LIST.length.toLocaleString('tr-TR');
-      fillPages(LIST.length);
-      renderTop5();
-      renderPage(1);
-    }catch(e){
-      console.error(e);
-      TBL.innerHTML = <tr><td colspan="3" class="muted">Veri yüklenemedi.</td></tr>;
-    }
+/* ===== Global ===== */
+const PAGE_SIZE = 100;
+let LIST = [];            // tam liste (sabit sıra)
+let INDEX = new Map();    // username(lower) -> index
+let FIRST5 = [];          // ilk 5
+
+/* ===== Render ===== */
+function fillPageSelect(total){
+  const pages=Math.max(1,Math.ceil(total/PAGE_SIZE));
+  const sel=document.getElementById("page");
+  sel.innerHTML="";
+  for(let i=1;i<=pages;i++){
+    const o=document.createElement("option");
+    o.value=String(i); o.textContent=String(i);
+    sel.appendChild(o);
   }
-
-  function avatarUrl(u){
-    // unavatar: instagram kullanıcı avatarı (3rd-party). Hata olursa img gizleniyor.
-    return https://unavatar.io/instagram/${encodeURIComponent(u)};
-  }
-
-  function renderTop5(){
-    const cups = ['🥇','🥈','🥉','🏅','🏅'];
-    TOP5.innerHTML = LIST.slice(0,5).map((u,i)=>`
-      <li>
-        <div class="badge">${i+1}</div>
-        <img class="ava" loading="lazy" referrerpolicy="no-referrer"
-             src="${avatarUrl(u)}"
-             alt="@${u}"
-             onerror="this.style.display='none'">
-        <div>@${u}</div>
-        <div style="margin-left:auto">${cups[i]||''}</div>
-      </li>
-    `).join('');
-  }
-
-  function renderPage(p, highlightUser){
-    currentPage = Math.max(1, Math.min(p, Math.ceil(LIST.length/PAGE_SIZE)));
-    PAGE.value = String(currentPage);
-    const start=(currentPage-1)*PAGE_SIZE, end=Math.min(start+PAGE_SIZE, LIST.length);
-    let rows='';
-    for(let i=start;i<end;i++){
-      const u=LIST[i], rank=i+1;
-      const isMe = highlightUser && norm(highlightUser)===u;
-      rows += `
-        <tr class="${isMe?'hl':''}">
-          <td>${rank}</td>
-          <td>
-            <div class="usercell">
-              <img class="ava" loading="lazy" referrerpolicy="no-referrer"
-                   src="${avatarUrl(u)}"
-                   alt="@${u}"
-                   onerror="this.style.display='none'">
-              <span>@${u}</span>
-            </div>
-          </td>
-          <td class="muted">${rank<=5?'Öncelik':''}</td>
-        </tr>`;
-    }
-    TBL.innerHTML = rows || <tr><td colspan="3" class="muted">Bu sayfada içerik yok.</td></tr>;
-  }
-
-  function fillPages(total){
-    const pages = Math.max(1, Math.ceil(total/PAGE_SIZE));
-    PAGE.innerHTML = Array.from({length:pages}, (_,i)=><option value="${i+1}">${i+1}</option>).join('');
-  }
-
-  function findUser(q){
-    const u = norm(q);
-    if(!u) return null;
-    const i = INDEX.get(u);
-    return i==null ? null : {index:i, rank:i+1, user:u};
-  }
-
-  $('#btnFind').onclick = ()=>{
-    const q = $('#q').value;
-    const res = findUser(q);
-    if(!res){
-      FOUND.textContent = '@'+q+' bulunamadı';
-      FOUND.className = 'chip';
-      FOUND.style.display='inline-block';
-      return;
-    }
-    const page = Math.floor((res.rank-1)/PAGE_SIZE)+1;
-    renderPage(page, res.user);
-    FOUND.textContent = '@'+res.user+' → #'+res.rank;
-    FOUND.className = 'chip ok';
-    FOUND.style.display='inline-block';
-    // tabloya odakla
-    const top = document.querySelector('main').offsetTop;
-    window.scrollTo({top: top-8, behavior:'smooth'});
-  };
-
-  $('#btnPage').onclick = ()=>{
-    const p = parseInt(PAGE.value,10)||1;
-    renderPage(p);
-  };
-
-  $('#q').addEventListener('keydown', e=>{
-    if(e.key==='Enter') $('#btnFind').click();
+}
+function renderTop5(){
+  const c=document.getElementById("top5");
+  c.innerHTML="";
+  const arr = FIRST5;
+  arr.forEach((u,i)=>{
+    const row=document.createElement("div");
+    row.className="top5-item";
+    const dot=document.createElement("div");
+    dot.className="rankDot"; dot.textContent=String(i+1);
+    const name=document.createElement("div");
+    name.textContent="@"+u;
+    const cup=document.createElement("div");
+    cup.className="cup";
+    if(i===0) cup.textContent="🏆";
+    else if(i===1) cup.textContent="🥈";
+    else if(i===2) cup.textContent="🥉";
+    row.appendChild(dot); row.appendChild(name); row.appendChild(cup);
+    c.appendChild(row);
   });
+}
+function renderTable(page=1, highlightUser){
+  const tb=document.querySelector("#tbl tbody");
+  tb.innerHTML="";
+  const start=(page-1)*PAGE_SIZE;
+  const items=LIST.slice(start, start+PAGE_SIZE);
+  const hi = highlightUser ? highlightUser.toLowerCase() : null;
+  items.forEach((u,i)=>{
+    const tr=document.createElement("tr");
+    const td1=document.createElement("td"); td1.textContent=start+i+1;
+    const td2=document.createElement("td"); td2.textContent="@"+u;
+    const td3=document.createElement("td"); td3.className="muted"; td3.textContent="";
+    tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
+    if(hi && u.toLowerCase()===hi){ tr.classList.add("hl"); }
+    tb.appendChild(tr);
+  });
+}
+function scrollToRank(rank){
+  const page=Math.max(1,Math.ceil(rank/PAGE_SIZE));
+  document.getElementById("page").value=String(page);
+  renderTable(page);
+  // highlight’ı da yapalım
+  const idxInPage=(rank-1)%PAGE_SIZE;
+  const tr=document.querySelector("#tbl tbody")?.children[idxInPage];
+  if(tr){ tr.classList.add("hl"); tr.scrollIntoView({behavior:"smooth",block:"center"}); }
+}
 
-  load();
-})();
+/* ===== Data Load ===== */
+async function loadAll(){
+  const errBox = document.getElementById("err");
+  try{
+    const [csvText, bans] = await Promise.all([
+      fetch("./data/followers.csv", {cache:"no-store"}).then(r=>{
+        if(!r.ok) throw new Error("followers.csv yüklenemedi ("+r.status+")");
+        return r.text();
+      }),
+      fetch("./data/bans.json", {cache:"no-store"}).then(r=> r.ok ? r.json() : []).catch(()=>[])
+    ]);
+    let raw = parseCSV(csvText);
+    // ban filtre
+    const banSet=new Set((bans||[]).map(x=>String(x).toLowerCase()));
+    raw = raw.filter(u=>!banSet.has(u.toLowerCase()));
+    // tekilleştir (ilk görüleni koru) ve sabit sıra
+    LIST = dedupeKeepFirst(raw);
+    FIRST5 = LIST.slice(0,5);
+    // index
+    INDEX.clear();
+    LIST.forEach((u,i)=>INDEX.set(u.toLowerCase(), i));
+    // UI
+    document.getElementById("total").textContent = LIST.length;
+    fillPageSelect(LIST.length);
+    renderTable(1);
+    renderTop5();
+  }catch(e){
+    errBox.style.display="block";
+    errBox.textContent = "Veri yüklenemedi: " + e.message;
+    console.error(e);
+  }
+}
+
+/* ===== UI ===== */
+document.getElementById("btnPage").onclick=()=>{
+  const p=parseInt(document.getElementById("page").value,10)||1;
+  renderTable(p);
+};
+function findAndShow(){
+  const v = document.getElementById("q").value.trim();
+  const info=document.getElementById("foundInfo");
+  if(!v){ info.style.display="none"; return; }
+  const u = v.replace(/^@/,"").toLowerCase();
+  const pos = INDEX.get(u);
+  if(pos==null){
+    info.textContent = "@"+v+" bulunamadı";
+    info.className = "chip";
+    info.style.display = "inline-block";
+    return;
+  }
+  const r = pos+1;
+  info.textContent = "@"+v+" → #"+r;
+  info.className = "chip success";
+  info.style.display = "inline-block";
+  scrollToRank(r);
+}
+document.getElementById("btnFind").onclick=findAndShow;
+document.getElementById("q").addEventListener("keydown",e=>{
+  if(e.key==="Enter") findAndShow();
+});
+
+/* ===== Start ===== */
+loadAll();
 </script>
 </body>
 </html>
