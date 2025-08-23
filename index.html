@@ -7,8 +7,7 @@
 <style>
   :root{
     --bg:#0b0b12; --card:#141422; --muted:#9aa; --text:#eee; --border:#26263a;
-    --accent:#7e86ff; --accent-2:#5a64ff; --ok:#15c27a;
-    --chip:#1d1d2b; --chip-b:#32324a;
+    --accent:#7e86ff; --chip:#1d1d2b; --chip-b:#32324a;
     --highlight:#103d2c; --highlight-border:#20c384;
   }
   *{box-sizing:border-box}
@@ -21,7 +20,6 @@
   .badge{background:var(--chip);border:1px solid var(--chip-b);padding:6px 10px;border-radius:999px;color:#d0d0ff;font-size:12px}
   .btn{background:var(--accent);border:0;color:#fff;padding:10px 14px;border-radius:10px;cursor:pointer}
   .ghost{background:#1c1c2a;color:#cfd0ff}
-  .btn:active{transform:translateY(1px)}
   .grow{flex:1}
   input,select{background:#10101a;color:var(--text);border:1px solid #2b2b3c;border-radius:10px;padding:10px 12px}
   .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
@@ -36,12 +34,10 @@
   .top5-item{display:flex;align-items:center;gap:12px;background:#11111b;border:1px solid var(--border);padding:10px;border-radius:12px}
   .rankDot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#1a1a27;border:1px solid #2b2b3c;color:#cfd0ff;font-weight:700}
   .cup{font-size:14px}
-  .success{background:#11251d;border:1px solid #1e6346;color:#73f0b9}
   .hl{background:var(--highlight)!important;border-left:3px solid var(--highlight-border)}
-  .chips{display:flex;gap:8px;flex-wrap:wrap}
   .chip{background:var(--chip);border:1px solid var(--chip-b);padding:6px 10px;border-radius:999px;font-size:12px}
   .footer{opacity:.6;font-size:12px;margin-top:8px}
-  .error{background:#2a1212;border:1px solid #5e2a2a;color:#ffbdbd;padding:10px;border-radius:10px;margin:8px 0}
+  .error{background:#2a1212;border:1px solid #5e2a2a;color:#ffbdbd;padding:10px;border-radius:10px;margin:8px 0;display:none}
 </style>
 </head>
 <body>
@@ -53,7 +49,7 @@
       <a class="badge" href="https://instagram.com/takipcisavasi" target="_blank" rel="noopener">instagram.com/takipcisavasi</a>
     </header>
 
-    <div id="err" style="display:none" class="error"></div>
+    <div id="err" class="error"></div>
 
     <div class="row" style="margin-bottom:12px">
       <input id="q" placeholder="@kullanıcı bul" class="grow" />
@@ -72,7 +68,9 @@
           <strong>Top 100</strong>
         </div>
         <table id="tbl">
-          <thead><tr><th style="width:56px">#</th><th>Kullanıcı</th><th class="muted" style="width:130px">Not</th></tr></thead>
+          <thead>
+            <tr><th style="width:56px">#</th><th>Kullanıcı</th><th class="muted" style="width:130px">Not</th></tr>
+          </thead>
           <tbody><tr><td colspan="3" class="muted" id="loadingCell">Yükleniyor…</td></tr></tbody>
         </table>
         <div class="footer muted">© 2025</div>
@@ -88,40 +86,23 @@
   </div>
 
 <script>
-/* ===== Yardımcılar ===== */
-function cleanUser(raw){
-  if(!raw) return "";
-  const s = String(raw).trim();
-  // satırdaki son "kelimeyi" al (boşluklara göre), @ varsa at
-  const parts = s.split(/\s+/);
-  const last = parts[parts.length-1] || "";
-  return last.replace(/^@/,"").replace(/[^a-zA-Z0-9._]/g,"");
-}
+/* ---------- Sıra BİREBİR korunur: ilk kullanıcı adı regex ile çekilir ---------- */
 function parseCSV(raw){
-  return raw
-    .split(/\r?\n/)
-    .map(l=>cleanUser(l))
-    .filter(Boolean);
-}
-function dedupeKeepFirst(arr){
-  const seen = new Set();
-  const out = [];
-  for(const u of arr){
-    const k = u.toLowerCase();
-    if(seen.has(k)) continue;
-    seen.add(k);
-    out.push(u);
-  }
-  return out;
+  return raw.split(/\r?\n/).map(line=>{
+    const s = String(line).trim();
+    if(!s) return "";
+    // En baştaki numaralandırmaları temizle (1., 1) 1- vb.)
+    const t = s.replace(/^\s*\d+[\.)-]?\s*/,"");
+    // Satırdaki ilk kullanıcı adı: @? [A-Za-z0-9._]
+    const m = t.match(/@?[A-Za-z0-9._]+/);
+    return m ? m[0].replace(/^@/,"") : "";
+  }).filter(Boolean);
 }
 
-/* ===== Global ===== */
 const PAGE_SIZE = 100;
-let LIST = [];            // tam liste (sabit sıra)
-let INDEX = new Map();    // username(lower) -> index
-let FIRST5 = [];          // ilk 5
+let LIST = [];
+let INDEX = new Map();
 
-/* ===== Render ===== */
 function fillPageSelect(total){
   const pages=Math.max(1,Math.ceil(total/PAGE_SIZE));
   const sel=document.getElementById("page");
@@ -132,19 +113,16 @@ function fillPageSelect(total){
     sel.appendChild(o);
   }
 }
+
 function renderTop5(){
   const c=document.getElementById("top5");
   c.innerHTML="";
-  const arr = FIRST5;
-  arr.forEach((u,i)=>{
-    const row=document.createElement("div");
-    row.className="top5-item";
-    const dot=document.createElement("div");
-    dot.className="rankDot"; dot.textContent=String(i+1);
-    const name=document.createElement("div");
-    name.textContent="@"+u;
-    const cup=document.createElement("div");
-    cup.className="cup";
+  const first5 = LIST.slice(0,5);
+  first5.forEach((u,i)=>{
+    const row=document.createElement("div"); row.className="top5-item";
+    const dot=document.createElement("div"); dot.className="rankDot"; dot.textContent=String(i+1);
+    const name=document.createElement("div"); name.textContent="@"+u;
+    const cup=document.createElement("div"); cup.className="cup";
     if(i===0) cup.textContent="🏆";
     else if(i===1) cup.textContent="🥈";
     else if(i===2) cup.textContent="🥉";
@@ -152,12 +130,14 @@ function renderTop5(){
     c.appendChild(row);
   });
 }
+
 function renderTable(page=1, highlightUser){
   const tb=document.querySelector("#tbl tbody");
   tb.innerHTML="";
   const start=(page-1)*PAGE_SIZE;
-  const items=LIST.slice(start, start+PAGE_SIZE);
+  const items=LIST.slice(start,start+PAGE_SIZE);
   const hi = highlightUser ? highlightUser.toLowerCase() : null;
+
   items.forEach((u,i)=>{
     const tr=document.createElement("tr");
     const td1=document.createElement("td"); td1.textContent=start+i+1;
@@ -168,39 +148,28 @@ function renderTable(page=1, highlightUser){
     tb.appendChild(tr);
   });
 }
+
 function scrollToRank(rank){
   const page=Math.max(1,Math.ceil(rank/PAGE_SIZE));
   document.getElementById("page").value=String(page);
   renderTable(page);
-  // highlight’ı da yapalım
   const idxInPage=(rank-1)%PAGE_SIZE;
-  const tr=document.querySelector("#tbl tbody")?.children[idxInPage];
+  const tr=document.querySelector("#tbl tbody").children[idxInPage];
   if(tr){ tr.classList.add("hl"); tr.scrollIntoView({behavior:"smooth",block:"center"}); }
 }
 
-/* ===== Data Load ===== */
 async function loadAll(){
   const errBox = document.getElementById("err");
   try{
-    const [csvText, bans] = await Promise.all([
-      fetch("./data/followers.csv", {cache:"no-store"}).then(r=>{
-        if(!r.ok) throw new Error("followers.csv yüklenemedi ("+r.status+")");
-        return r.text();
-      }),
-      fetch("./data/bans.json", {cache:"no-store"}).then(r=> r.ok ? r.json() : []).catch(()=>[])
-    ]);
-    let raw = parseCSV(csvText);
-    // ban filtre
-    const banSet=new Set((bans||[]).map(x=>String(x).toLowerCase()));
-    raw = raw.filter(u=>!banSet.has(u.toLowerCase()));
-    // tekilleştir (ilk görüleni koru) ve sabit sıra
-    LIST = dedupeKeepFirst(raw);
-    FIRST5 = LIST.slice(0,5);
-    // index
+    const csvText = await fetch("./data/followers.csv",{cache:"no-store"}).then(r=>{
+      if(!r.ok) throw new Error("followers.csv yüklenemedi ("+r.status+")");
+      return r.text();
+    });
+    LIST = parseCSV(csvText);       // >>> SIRA AYNEN KORUNUR
     INDEX.clear();
     LIST.forEach((u,i)=>INDEX.set(u.toLowerCase(), i));
-    // UI
     document.getElementById("total").textContent = LIST.length;
+
     fillPageSelect(LIST.length);
     renderTable(1);
     renderTop5();
@@ -211,35 +180,36 @@ async function loadAll(){
   }
 }
 
-/* ===== UI ===== */
+/* UI */
 document.getElementById("btnPage").onclick=()=>{
   const p=parseInt(document.getElementById("page").value,10)||1;
   renderTable(p);
 };
+
 function findAndShow(){
-  const v = document.getElementById("q").value.trim();
+  const v=document.getElementById("q").value.trim();
   const info=document.getElementById("foundInfo");
   if(!v){ info.style.display="none"; return; }
-  const u = v.replace(/^@/,"").toLowerCase();
-  const pos = INDEX.get(u);
+  const key = v.replace(/^@/,"").toLowerCase();
+  const pos = INDEX.get(key);
   if(pos==null){
-    info.textContent = "@"+v+" bulunamadı";
-    info.className = "chip";
-    info.style.display = "inline-block";
+    info.textContent="@"+v+" bulunamadı";
+    info.className="chip";
+    info.style.display="inline-block";
     return;
   }
-  const r = pos+1;
-  info.textContent = "@"+v+" → #"+r;
-  info.className = "chip success";
-  info.style.display = "inline-block";
-  scrollToRank(r);
+  const rank=pos+1;
+  info.textContent="@"+v+" → #"+rank;
+  info.className="chip";
+  info.style.display="inline-block";
+  scrollToRank(rank);
 }
 document.getElementById("btnFind").onclick=findAndShow;
 document.getElementById("q").addEventListener("keydown",e=>{
   if(e.key==="Enter") findAndShow();
 });
 
-/* ===== Start ===== */
+/* Start */
 loadAll();
 </script>
 </body>
