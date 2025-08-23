@@ -1,275 +1,245 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Takipçi Savaşı</title>
-  <style>
-    :root{
-      --bg:#0b0b12; --card:#141422; --muted:#aaa; --text:#eee; --border:#26263a;
-      --accent:#7e86ff; --accent-2:#5a64ff;
-      --chip:#1d1d2b; --chip-b:#32324a;
-      --highlight:#103d2c; --highlight-border:#20c384;
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-    a{color:inherit;text-decoration:none}
-    .wrap{max-width:1150px;margin:0 auto;padding:16px}
-    header{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
-    h1{margin:0;font-size:22px;white-space:nowrap}
-    .badge{background:var(--chip);border:1px solid var(--chip-b);padding:6px 10px;border-radius:999px;color:#d0d0ff;font-size:12px;white-space:nowrap}
-    .btn{background:var(--accent);border:0;color:#fff;padding:10px 14px;border-radius:10px;cursor:pointer}
-    .ghost{background:#1c1c2a;color:#cfd0ff}
-    .btn:active{transform:translateY(1px)}
-    .grow{flex:1}
-    input,select{background:#10101a;color:var(--text);border:1px solid #2b2b3c;border-radius:10px;padding:10px 12px}
-    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px}
-    .grid{display:grid;grid-template-columns:2fr 1fr;gap:12px}
-    @media (max-width:900px){.grid{grid-template-columns:1fr}}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:10px;border-bottom:1px solid #1c1c2b}
-    th{color:var(--muted);font-weight:600;text-align:left}
-    .muted{color:var(--muted)}
-    .right{margin-left:auto}
-    .top5-item{display:flex;align-items:center;gap:10px;background:#11111b;border:1px solid var(--border);padding:10px;border-radius:12px}
-    .rankDot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#1a1a27;border:1px solid #2b2b3c;color:#cfd0ff;font-weight:700}
-    .cup{font-size:14px}
-    .hl{background:var(--highlight)!important;border-left:3px solid var(--highlight-border)}
-    .chip{background:var(--chip);border:1px solid var(--chip-b);padding:6px 10px;border-radius:999px;font-size:12px}
-    .chip.ok{background:#11251d;border-color:#1e6346;color:#73f0b9}
-    .footer{opacity:.6;font-size:12px;margin-top:8px}
-    .loading{opacity:.7}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Takipçi Savaşı</title>
+<style>
+  :root{
+    --bg:#0b0b12; --card:#141422; --muted:#a9a9b5; --text:#eaeaf2; --line:#26263a;
+    --accent:#7c83ff; --chip:#1f2030; --ok:#39d98a; --hl:#103d2c; --hlb:#20c384;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial}
+  a{color:inherit;text-decoration:none}
+  header{display:flex;gap:10px;align-items:center;flex-wrap:wrap;max-width:1200px;margin:16px auto 8px;padding:0 16px}
+  h1{margin:0;font-size:20px}
+  .tag{background:var(--chip);border:1px solid var(--line);color:var(--muted);padding:6px 10px;border-radius:999px;font-size:12px}
+  .grow{flex:1}
+  main{max-width:1200px;margin:0 auto;padding:0 16px 24px}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
+  input,select,button{background:#101021;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px 12px}
+  button{cursor:pointer}
+  .btn{background:var(--accent);color:#fff;border:none}
+  .btn-ghost{background:var(--chip);border:1px solid var(--line);color:var(--text)}
+  .grid{display:grid;grid-template-columns:1fr 320px;gap:12px;margin-top:12px}
+  @media(max-width:980px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .card h3{margin:0 0 8px 0;font-size:14px;color:var(--muted)}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left}
+  th{color:var(--muted)}
+  tbody tr:hover{background:#0f0f18}
+  .muted{color:var(--muted)}
+  .hl{background:var(--hl)!important;border-left:3px solid var(--hlb)}
+  .err{background:#2a1212;border:1px solid #5e2a2a;color:#ffbdbd;padding:10px;border-radius:10px;margin:10px 0;display:none}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <h1>Takipçi Savaşı</h1>
-      <span class="chip" id="today"></span>
-      <span class="badge">Toplam <b id="total">0</b> kişi</span>
-      <div class="grow"></div>
-      <a class="badge" href="https://instagram.com/takipcisavasi" target="_blank" rel="noopener">instagram.com/takipcisavasi</a>
-    </header>
+  <header>
+    <h1>Takipçi Savaşı</h1>
+    <span class="tag">Toplam <b id="total">0</b> kişi</span>
+    <div class="grow"></div>
+    <a class="tag" href="https://instagram.com/takipcisavasi" target="_blank" rel="noopener">instagram.com/takipcisavasi</a>
+  </header>
 
-    <div class="row" style="margin-bottom:12px">
+  <main>
+    <div id="err" class="err"></div>
+
+    <div class="row">
       <input id="q" placeholder="@kullanıcı bul" class="grow" />
       <button id="btnFind" class="btn">Sırayı Göster</button>
-      <span class="chip" id="foundInfo" style="display:none"></span>
-
-      <div class="right row">
-        <label class="muted">Sayfa:</label>
+      <span id="found" class="tag" style="display:none"></span>
+      <div class="row" style="margin-left:auto">
+        <label class="muted">Sayfa</label>
         <select id="page"></select>
-        <button id="btnPage" class="btn ghost">Görüntüle</button>
+        <button id="btnPage" class="btn-ghost">Görüntüle</button>
       </div>
     </div>
 
     <div class="grid">
       <section class="card">
-        <div class="row" style="margin-bottom:8px">
-          <strong>Top 100</strong>
-        </div>
-
+        <h3>Top 100</h3>
         <table id="tbl">
-          <thead>
-            <tr><th style="width:56px">#</th><th>Kullanıcı</th><th class="muted" style="width:130px">Not</th></tr>
-          </thead>
-          <tbody>
-            <tr class="loading"><td colspan="3">Yükleniyor…</td></tr>
-          </tbody>
+          <thead><tr><th style="width:64px">#</th><th>Kullanıcı</th><th class="muted" style="width:120px">Not</th></tr></thead>
+          <tbody><tr><td colspan="3" class="muted">Yükleniyor…</td></tr></tbody>
         </table>
-        <div class="footer muted">© 2025</div>
       </section>
 
       <aside class="card">
-        <div class="row" style="margin-bottom:8px">
-          <strong>İlk 5</strong>
-        </div>
-        <div id="top5" class="row" style="flex-direction:column;gap:8px"></div>
+        <h3>İlk 5</h3>
+        <ol id="top5" style="list-style:none;padding:0;margin:0"></ol>
       </aside>
     </div>
-  </div>
+  </main>
 
 <script>
-/* ------------------ SÜRÜM / CACHE KIRICI ------------------ */
-const ASSET_VERSION = '2025-08-23-01'; // CSV güncellendikçe değiştir
+(function(){
+  // CSV için birden fazla olası yol: ilk çalışanı kullan
+  const VER = '2025-08-23-02'; // deploy edince artır
+  const CANDIDATES = [
+    ./data/ranking.csv?v=${VER},
+    ./data/followers.csv?v=${VER},
+    /data/ranking.csv?v=${VER},
+    /data/followers.csv?v=${VER}
+  ];
+  const PAGE_SIZE = 100;
 
-/* ------------------ GÖRSEL BİLGİ ------------------ */
-const todayStr = new Date().toISOString().slice(0,10);
-document.getElementById('today').textContent = todayStr;
+  const $ = s => document.querySelector(s);
+  const TBL = $('#tbl tbody');
+  const PAGE = $('#page');
+  const TOTAL = $('#total');
+  const TOP5 = $('#top5');
+  const FOUND = $('#found');
+  const ERR = $('#err');
 
-/* ------------------ CSV PARSER (SIRAYI KORUR) ------------------ */
-function parseCSVKeepOrder(raw){
-  const text = raw.replace(/^\uFEFF/, ''); // BOM
-  const lines = text.split(/\r?\n/);
-  const out = [];
+  let LIST = [];
+  let INDEX = new Map();
+  let currentPage = 1;
 
-  for (let line of lines){
-    if (!line) continue;
-    let s = String(line).trim();
-    if (!s) continue;
-
-    // Baştaki numarayı kaldır: "1.", "1)", "1-"
+  // CSV satırını sırayı bozmadan kullanıcı adına indirger:
+  function lineToUser(line){
+    if(!line) return '';
+    let s = String(line).replace(/^\uFEFF/,'').trim();
+    if(!s) return '';
+    // "1. " / "1)" / "1-" başlık numaralarını kaldır (varsa)
     s = s.replace(/^\s*\d+[\.)-]?\s*/, '');
-
-    // Virgül varsa ilk sütunu al
+    // CSV'de virgül varsa sadece ilk sütunu al
     if (s.includes(',')) s = s.split(',')[0].trim();
-
-    // İlk kullanıcı adı: @?harf.rakam._
+    // İlk kullanıcı adı pattern'i
     const m = s.match(/@?[A-Za-z0-9._]+/);
-    if (!m) continue;
-
-    out.push(m[0].replace(/^@/, '')); // normalize
+    return m ? m[0].replace(/^@/, '') : '';
   }
-  return out;
-}
 
-/* ------------------ DURUMLAR ------------------ */
-const PAGE_SIZE = 100;
-let LIST = [];             // sırası değişmeyen tam liste
-let INDEX = new Map();     // username -> index (0-based)
-
-/* ------------------ UI Yardımcıları ------------------ */
-function fillPageSelect(total){
-  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  const sel = document.getElementById('page');
-  sel.innerHTML = '';
-  for (let i=1;i<=pages;i++){
-    const o = document.createElement('option');
-    o.value = String(i);
-    o.textContent = String(i);
-    sel.appendChild(o);
-  }
-}
-
-function renderTop5(){
-  const c = document.getElementById('top5');
-  c.innerHTML = '';
-  const first5 = LIST.slice(0, 5);
-  first5.forEach((u,i)=>{
-    const row=document.createElement('div');
-    row.className='top5-item';
-    const dot=document.createElement('div');
-    dot.className='rankDot';
-    dot.textContent=String(i+1);
-    const name=document.createElement('div');
-    name.textContent='@'+u;
-    const cup=document.createElement('div');
-    cup.className='cup';
-    if(i===0) cup.textContent='🏆';
-    else if(i===1) cup.textContent='🥈';
-    else if(i===2) cup.textContent='🥉';
-    row.appendChild(dot); row.appendChild(name); row.appendChild(cup);
-    c.appendChild(row);
-  });
-}
-
-function renderTable(page=1, highlightUser){
-  const start = (page-1)*PAGE_SIZE;
-  const items = LIST.slice(start, start+PAGE_SIZE);
-  const tb = document.querySelector('#tbl tbody');
-  tb.innerHTML = '';
-
-  const hl = highlightUser ? highlightUser.toLowerCase() : null;
-
-  for (let i=0;i<items.length;i++){
-    const tr = document.createElement('tr');
-    const rank = start + i + 1;
-
-    const td1 = document.createElement('td'); td1.textContent = rank;
-    const td2 = document.createElement('td'); td2.textContent = '@'+items[i];
-    const td3 = document.createElement('td'); td3.className='muted'; td3.textContent = '';
-
-    tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
-
-    if (hl && items[i].toLowerCase() === hl){
-      tr.classList.add('hl');
+  async function fetchFirst(urls){
+    let lastErr = null;
+    for(const u of urls){
+      try{
+        const r = await fetch(u, { cache:'no-store' });
+        if(!r.ok){ lastErr = new Error(${u} → ${r.status} ${r.statusText}); continue; }
+        const text = await r.text();
+        if(text && text.trim()){
+          return { url:u, text };
+        }else{
+          lastErr = new Error(${u} boş döndü);
+        }
+      }catch(e){
+        lastErr = new Error(${u} hata: ${e.message||e});
+      }
     }
-    tb.appendChild(tr);
+    throw lastErr || new Error('Hiçbir CSV bulunamadı');
   }
-}
 
-/* Arama → ilgili sayfayı aç + highlight + info chip */
-function findAndShow(username){
-  const info = document.getElementById('foundInfo');
-  if (!username){ info.style.display='none'; return; }
-
-  const key = username.replace(/^@/,'').trim().toLowerCase();
-  const pos = INDEX.get(key);
-
-  if (pos == null){
-    info.textContent = '@'+username+' bulunamadı';
-    info.className = 'chip';
-    info.style.display = 'inline-block';
-    return;
+  function renderTop5(){
+    TOP5.innerHTML = LIST.slice(0,5).map((u,i)=>`
+      <li style="display:flex;gap:10px;align-items:center;background:#101021;border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px">
+        <div style="width:28px;height:28px;border-radius:8px;background:var(--chip);border:1px solid var(--line);display:grid;place-items:center;color:var(--muted);font-weight:700">${i+1}</div>
+        <div>@${u}</div>
+        <div style="margin-left:auto">${i===0?'🏆':i===1?'🥈':i===2?'🥉':'🏅'}</div>
+      </li>
+    `).join('');
   }
-  const rank = pos + 1;
-  info.textContent = '@'+username+' → #'+rank;
-  info.className = 'chip ok';
-  info.style.display = 'inline-block';
 
-  const page = Math.max(1, Math.ceil(rank / PAGE_SIZE));
-  document.getElementById('page').value = String(page);
-  renderTable(page, key);
-
-  // Satırı ortaya kaydır
-  const tb=document.querySelector("#tbl tbody");
-  const idxInPage=(rank-1)%PAGE_SIZE;
-  const tr=tb.children[idxInPage];
-  if(tr){ tr.scrollIntoView({behavior:'smooth',block:'center'}); }
-}
-
-/* ------------------ VERİYİ YÜKLE ------------------ */
-async function loadAll(){
-  const tb = document.querySelector('#tbl tbody');
-  tb.innerHTML = '<tr class="loading"><td colspan="3">Yükleniyor…</td></tr>';
-
-  try{
-    const [csvText, bans] = await Promise.all([
-      fetch(./data/followers.csv?v=${ASSET_VERSION}, {cache:'no-store'}).then(r=>{
-        if(!r.ok) throw new Error('followers.csv ' + r.status);
-        return r.text();
-      }),
-      fetch(./data/bans.json?v=${ASSET_VERSION}, {cache:'no-store'}).then(r=>r.ok?r.json():[])
-    ]);
-
-    const rawList = parseCSVKeepOrder(csvText);
-    const banSet = new Set((bans||[]).map(s=>String(s).toLowerCase()));
-
-    // sırayı bozmadan ban'leri at
-    LIST = rawList.filter(u=>u && !banSet.has(u.toLowerCase()));
-    document.getElementById('total').textContent = LIST.length;
-
-    // index’i kur
-    INDEX.clear();
-    LIST.forEach((u,i)=>INDEX.set(u.toLowerCase(), i));
-
-    fillPageSelect(LIST.length);
-    renderTable(1);
-    renderTop5();
-
-  }catch(err){
-    console.error(err);
-    tb.innerHTML = <tr class="loading"><td colspan="3">Yükleme hatası: ${String(err.message||err)}</td></tr>;
+  function fillPages(total){
+    const pages = Math.max(1, Math.ceil(total/PAGE_SIZE));
+    PAGE.innerHTML = '';
+    for(let i=1;i<=pages;i++){
+      const o=document.createElement('option');
+      o.value=o.textContent=i;
+      PAGE.appendChild(o);
+    }
   }
-}
 
-/* ------------------ BAŞLAT / EVENTLER ------------------ */
-loadAll();
+  function renderPage(p, highlightUser){
+    const pages = Math.max(1, Math.ceil(LIST.length/PAGE_SIZE));
+    currentPage = Math.max(1, Math.min(p, pages));
+    PAGE.value = String(currentPage);
 
-document.getElementById('btnPage').onclick = ()=>{
-  const p = parseInt(document.getElementById('page').value,10)||1;
-  renderTable(p);
-};
+    const start=(currentPage-1)*PAGE_SIZE;
+    const end=Math.min(start+PAGE_SIZE, LIST.length);
 
-document.getElementById('btnFind').onclick = ()=>{
-  const q = document.getElementById('q').value;
-  findAndShow(q);
-};
+    let rows='';
+    const hi = highlightUser ? highlightUser.toLowerCase() : null;
 
-document.getElementById('q').addEventListener('keydown',e=>{
-  if(e.key==='Enter') document.getElementById('btnFind').click();
-});
+    for(let i=start;i<end;i++){
+      const u = LIST[i];
+      const rank = i+1;
+      const highlight = hi && u.toLowerCase()===hi ? ' class="hl"' : '';
+      rows += `
+        <tr${highlight}>
+          <td>${rank}</td>
+          <td>@${u}</td>
+          <td class="muted"></td>
+        </tr>`;
+    }
+    TBL.innerHTML = rows || <tr><td colspan="3" class="muted">Bu sayfada içerik yok.</td></tr>;
+  }
+
+  function findAndShow(q){
+    const name = (q||'').trim().replace(/^@/,'').toLowerCase();
+    if(!name){ FOUND.style.display='none'; return; }
+    const pos = INDEX.get(name);
+    if(pos==null){
+      FOUND.textContent='@'+name+' bulunamadı';
+      FOUND.className='tag';
+      FOUND.style.display='inline-block';
+      return;
+    }
+    const rank = pos+1;
+    FOUND.textContent='@'+name+' → #'+rank;
+    FOUND.className='tag';
+    FOUND.style.display='inline-block';
+
+    const page = Math.floor((rank-1)/PAGE_SIZE)+1;
+    renderPage(page, name);
+
+    const idxInPage=(rank-1)%PAGE_SIZE;
+    const tr=document.querySelector('#tbl tbody').children[idxInPage];
+    if(tr){ tr.scrollIntoView({behavior:'smooth',block:'center'}); }
+  }
+
+  async function init(){
+    ERR.style.display='none';
+    TBL.innerHTML = <tr><td colspan="3" class="muted">Yükleniyor…</td></tr>;
+    try{
+      const {url, text} = await fetchFirst(CANDIDATES);
+      console.log('CSV kaynağı:', url);
+
+      const lines = text.split(/\r?\n/);
+      const users = [];
+      for(const line of lines){
+        const u = lineToUser(line);
+        if(u) users.push(u);       // SIRA AYNEN KORUNUR
+      }
+      if(!users.length) throw new Error(url+' boş göründü');
+
+      LIST = users;
+      INDEX.clear();
+      // Aramada ilk görülen rank’a gitmek için sadece ilk karşılaşılanı kaydediyoruz:
+      for(let i=0;i<LIST.length;i++){
+        const k = LIST[i].toLowerCase();
+        if(!INDEX.has(k)) INDEX.set(k, i);
+      }
+
+      TOTAL.textContent = LIST.length.toLocaleString('tr-TR');
+      fillPages(LIST.length);
+      renderTop5();
+      renderPage(1);
+    }catch(e){
+      console.error(e);
+      ERR.textContent = 'Veri yüklenemedi: '+(e.message||e);
+      ERR.style.display='block';
+      TBL.innerHTML = <tr><td colspan="3" class="muted">Yükleme hatası.</td></tr>;
+    }
+  }
+
+  // Eventler
+  $('#btnPage').onclick = ()=> renderPage(parseInt(PAGE.value,10)||1);
+  $('#btnFind').onclick = ()=> findAndShow($('#q').value);
+  $('#q').addEventListener('keydown', e=>{ if(e.key==='Enter') $('#btnFind').click(); });
+
+  init();
+})();
 </script>
 </body>
 </html>
