@@ -4,6 +4,18 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Takipçi Savaşı</title>
+
+  <!-- FAVICON / PREVIEW (assets klasörü) -->
+  <link rel="icon" href="/assets/favicon-32.png" sizes="32x32">
+  <link rel="icon" href="/assets/favicon-192.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+  <meta name="theme-color" content="#0b0b12">
+  <meta property="og:title" content="Takipçi Savaşı">
+  <meta property="og:description" content="Top 100 ve sıralama arama">
+  <meta property="og:image" content="/assets/og-image.png">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+
   <style>
     :root{
       --bg:#0b0b12; --card:#141422; --muted:#aaa; --text:#eee; --border:#26263a;
@@ -29,13 +41,29 @@
     .muted{color:var(--muted)}
     .hl{background:var(--hl)!important;border-left:3px solid var(--hl-b)}
     .error{margin-top:8px;color:#ff9e9e;background:#3b1212;border:1px solid #5a1b1b;padding:10px;border-radius:10px;white-space:pre-wrap}
+
+    /* --- LOGO --- */
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{height:28px; width:auto; display:block; border-radius:6px}
+    .brand-title{display:flex;align-items:center;gap:8px}
+    .brand-sep{width:1px;height:20px;background:#2b2b3c;border-radius:1px}
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <h1>Takipçi Savaşı</h1>
-      <span class="chip">Toplam <b id="total">0</b> kişi</span>
+      <!-- LOGO + BAŞLIK (assets) -->
+      <div class="brand">
+        <!-- Önce SVG dener, 404 olursa PNG'ye düşer -->
+        <img class="logo" src="/assets/logo.svg" alt="Takipçi Savaşı"
+             onerror="this.onerror=null;this.src='/assets/logo.png'">
+        <div class="brand-title">
+          <h1>Takipçi Savaşı</h1>
+          <span class="brand-sep"></span>
+          <span class="chip">Toplam <b id="total">0</b> kişi</span>
+        </div>
+      </div>
+
       <div class="grow"></div>
       <a class="chip" href="https://instagram.com/takipcisavasi" target="_blank" rel="noopener">instagram.com/takipcisavasi</a>
     </header>
@@ -74,9 +102,7 @@
 const PAGE_SIZE = 100;
 
 function cleanUser(line){
-  // satır: "1.  @kullanici", "25) kullanici", "kullanici", "@kullanici"
   if (!line) return '';
-  // BOM temizle
   line = line.replace(/^\uFEFF/, '');
   const parts = line.trim().split(/\s+/);
   const last = parts[parts.length-1] || '';
@@ -97,8 +123,8 @@ function setLoading(on){
 }
 
 /* -------- renderers -------- */
-let LIST = [];   // dosyadaki sırayla (sabit)
-let INDEX = new Map(); // username(lower) -> index
+let LIST = [];
+let INDEX = new Map();
 function fillPageSelect(total){
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const sel = document.getElementById('page');
@@ -131,20 +157,15 @@ function renderTop5(){
 function renderTable(page=1, highlight){
   const start=(page-1)*PAGE_SIZE;
   const items=LIST.slice(start,start+PAGE_SIZE);
-
   const tb = document.querySelector('#tbl tbody');
   tb.innerHTML = '';
-
   items.forEach((u, i)=>{
     const tr=document.createElement('tr');
     const rank=start+i+1;
-
     const td1=document.createElement('td'); td1.textContent=rank;
     const td2=document.createElement('td'); td2.textContent='@'+u;
     const td3=document.createElement('td'); td3.className='muted'; td3.textContent='';
-
     tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
-
     if (highlight && u === highlight.toLowerCase()){
       tr.classList.add('hl');
     }
@@ -157,7 +178,6 @@ function gotoRank(rank, username){
   const page=Math.max(1,Math.ceil(rank/PAGE_SIZE));
   document.getElementById('page').value=String(page);
   renderTable(page, username);
-  // ilgili satırı merkeze kaydır
   const idxInPage=(rank-1)%PAGE_SIZE;
   const tr=document.querySelector('#tbl tbody').children[idxInPage];
   if (tr) tr.scrollIntoView({behavior:'smooth', block:'center'});
@@ -177,14 +197,11 @@ function findAndShow(q){
 (async function init(){
   try{
     setLoading(true);
-
-    // followers.csv
     const csvResp = await fetch('./data/followers.csv', {cache:'no-store'});
     if(!csvResp.ok){ throw new Error('followers.csv okunamadı: '+csvResp.status+' '+csvResp.statusText); }
     const csvTxt  = await csvResp.text();
     let arr = parseCSV(csvTxt);
 
-    // bans (opsiyonel)
     let bans = [];
     try{
       const bansResp = await fetch('./data/bans.json', {cache:'no-store'});
@@ -194,7 +211,6 @@ function findAndShow(q){
     const banSet=new Set((bans||[]).map(s=>String(s).toLowerCase()));
     arr = arr.filter(u=>u && !banSet.has(u));
 
-    // diziliş = CSV dosyasındaki sıranın AYNISI
     LIST = arr.slice();
     INDEX.clear();
     LIST.forEach((u,i)=>INDEX.set(u,i));
@@ -214,18 +230,9 @@ function findAndShow(q){
 })();
 
 /* -------- UI -------- */
-document.getElementById('btnPage').onclick=()=>{
-  const p=parseInt(document.getElementById('page').value,10)||1;
-  renderTable(p);
-};
-document.getElementById('btnFind').onclick=()=>{
-  const q=document.getElementById('q').value;
-  document.getElementById('err').style.display='none';
-  findAndShow(q);
-};
-document.getElementById('q').addEventListener('keydown',e=>{
-  if(e.key==='Enter') document.getElementById('btnFind').click();
-});
+document.getElementById('btnPage').onclick=()=>{ const p=parseInt(document.getElementById('page').value,10)||1; renderTable(p); };
+document.getElementById('btnFind').onclick=()=>{ const q=document.getElementById('q').value; document.getElementById('err').style.display='none'; findAndShow(q); };
+document.getElementById('q').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('btnFind').click(); });
 </script>
 </body>
 </html>
